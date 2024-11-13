@@ -1,0 +1,41 @@
+{
+  "name": "multi-owners-signing-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@mantine/core": "6.0.21",
+    "@mantine/form": "6.0.21",
+    "@mantine/hooks": "6.0.21",
+    "@mantine/prism": "^6.0.22",
+    "@tabler/icons-react": "^3.22.0",
+    "@tanstack/react-query": "^5.56.2",
+    "@wagmi/core": "^2.14.4",
+    "@web3modal/wagmi": "^4.1.6",
+    "ethers": "^6.13.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "viem": "^2.21.12",
+    "wagmi": "^2.12.13"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.9.0",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.0.1",
+    "vite": "^5.4.1"
+  }
+}
