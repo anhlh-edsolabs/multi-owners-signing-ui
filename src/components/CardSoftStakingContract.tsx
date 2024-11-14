@@ -414,7 +414,7 @@ const CardSoftStakingContract = () => {
 									{claimData.map((row, index) => (
 										<tr key={index}>
 											{Object.values(row).map(
-												(value, i) => (
+												(value: any, i) => (
 													<td key={i}>{value}</td>
 												),
 											)}

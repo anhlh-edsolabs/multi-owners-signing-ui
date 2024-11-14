@@ -1,7 +1,7 @@
-import { Container, Stack, Group, Space, Flex, Grid } from "@mantine/core";
-import CardWallet from "./components/CardWallet";
+import { Container, Grid, Space, Stack } from "@mantine/core";
 import CardERC20Token from "./components/CardERC20Token";
 import CardSoftStakingContract from "./components/CardSoftStakingContract";
+import CardWallet from "./components/CardWallet";
 
 export default function App() {
 	return (
