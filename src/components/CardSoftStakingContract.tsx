@@ -1,46 +1,54 @@
 import {
+	Button,
 	Card,
-	Stack,
-	Title,
-	Text,
 	Group,
+	JsonInput,
 	Select,
 	Space,
-	Button,
-	TextInput,
+	Stack,
 	Table,
-	JsonInput,
+	Text,
+	TextInput,
+	Title,
 } from "@mantine/core";
 import { Prism } from "@mantine/prism";
 import { IconTransitionRightFilled } from "@tabler/icons-react";
 
+import { useForm } from "@mantine/form";
+import { Config } from "@wagmi/core";
 import { ethers } from "ethers";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
-	useSignTypedData,
-	useReadContract,
 	useChainId,
 	useChains,
+	useReadContract,
+	useSignTypedData,
 } from "wagmi";
-import { useForm } from "@mantine/form";
+
+import { config } from "../common/config.ts";
 import {
 	ClaimData,
-	ReadContractProps,
 	FunctionCallFormData,
+	FunctionCallTypedData,
+	ReadContractProps
 } from "../common/types/";
-import { config } from "../common/config.ts";
 
 import {
-	SoftStakingDomain as domain,
-	Constants,
+	convertObjectListToArray,
 	convertRawDataToClaimData,
 	createFunctionCallTypedData,
-	convertObjectListToArray,
+	SoftStakingTypedDataDomain as domain,
 } from "../common/libs/SoftStakingEIP712.ts";
 
+import Constants from "../common/Constants.ts";
 import { getFunction } from "../common/libs/Utils.ts";
 
-const SPECIAL_FUNCTIONS = ["createClaimDataMultiple"];
+const SPECIAL_FUNCTION = "createClaimDataMultiple";
+const MULTI_SIG_FUNCTIONS = [
+	"createClaimDataMultiple",
+	"createClaimData",
+	"changeOwner",
+];
 
 const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
 	(item) =>
@@ -49,7 +57,7 @@ const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
 		item.stateMutability !== "pure",
 );
 
-const generateClaimDataList = (data: any): ClaimData[] => {
+const generateClaimDataList = (data: unknown): ClaimData[] => {
 	const claimDataRawList = convertRawDataToClaimData(data);
 
 	const accessKeys: string[] = [];
@@ -94,14 +102,23 @@ const CardSoftStakingContract = () => {
 	const chainId = useChainId();
 	const chains = useChains({ config });
 
-	const [connectedChain, setConnectedChain] = useState<any>(null);
+	const [connectedChain, setConnectedChain] = useState<
+		Config["chains"][number] | null
+	>(null);
 	const [selectedFunction, setSelectedFunction] = useState<string | null>(
 		null,
 	);
-	const [claimData, setClaimData] = useState<any[]>([]);
-	const [claimDataList, setClaimDataList] = useState<any[][]>([]);
+	const [claimData, setClaimData] = useState<
+		{
+			year: string;
+			month: string;
+			wallet_address: string;
+			amount_reward: string;
+		}[]
+	>([]);
+	const [claimDataList, setClaimDataList] = useState<unknown[][]>([]);
 	const [typedData, setTypedData] = useState<any>(null);
-	const [nonce, setNonce] = useState<any>(null);
+	const [nonce, setNonce] = useState<string>("");
 	const [signature, setSignature] = useState<string | null>(null);
 
 	const { signTypedDataAsync, data: signatureData } = useSignTypedData();
@@ -142,7 +159,7 @@ const CardSoftStakingContract = () => {
 	}, [signatureData]);
 
 	useEffect(() => {
-		if (SPECIAL_FUNCTIONS.includes(selectedFunction!)) {
+		if (selectedFunction === SPECIAL_FUNCTION) {
 			import("../common/data/soft_staking_data.json")
 				.then((data) => {
 					setClaimData(data.default);
@@ -165,23 +182,23 @@ const CardSoftStakingContract = () => {
 		setTypedData(null);
 	}, [selectedFunction, nonce]);
 
-	const handleTypedDataGeneration = (values: any) => {
+	const handleTypedDataGeneration = (values: FunctionCallFormData) => {
 		console.log("HandleTypedDataGeneration:", values.params);
 
 		const paramValues =
-			SPECIAL_FUNCTIONS.includes(selectedFunction!) &&
-			claimDataList.length > 0
+			selectedFunction === SPECIAL_FUNCTION && claimDataList.length > 0
 				? [claimDataList]
 				: values.params;
 
 		const typedData = createFunctionCallTypedData(
 			domain,
 			values.functionName,
-			values.nonce,
+			values.nonce ?? 0,
 			paramValues,
 		);
+		// typedData.message.selector = typedData.message.selector || "";
 		console.log("TypedData", typedData);
-		setTypedData(typedData);
+		setTypedData(typedData as FunctionCallTypedData);
 	};
 
 	const handleInputValueChange = (index: number, value: string) => {
@@ -230,7 +247,7 @@ const CardSoftStakingContract = () => {
 								}
 								onClick={() =>
 									window.open(
-										`${connectedChain?.blockExplorers.default.url}/address/${Constants.SOFTSTAKING_ADDRESS}`,
+										`${connectedChain?.blockExplorers?.default.url}/address/${Constants.SOFTSTAKING_ADDRESS}`,
 									)
 								}
 								variant="white"
@@ -252,7 +269,7 @@ const CardSoftStakingContract = () => {
 									getFunction(
 										func.name || "",
 										Constants.SOFTSTAKING_CONTRACT_ABI,
-									)?.selector
+									).selector
 								})`,
 							}))}
 							onChange={handleFunctionSelect}
@@ -267,9 +284,7 @@ const CardSoftStakingContract = () => {
 						</Title>
 						<form>
 							<Stack spacing="xs">
-								{!SPECIAL_FUNCTIONS.includes(
-									selectedFunction,
-								) &&
+								{selectedFunction !== SPECIAL_FUNCTION &&
 									WriteFunctions.find(
 										(func) =>
 											func.name === selectedFunction,
@@ -318,27 +333,43 @@ const CardSoftStakingContract = () => {
 											/>
 										);
 									})}
-								<Group grow>
-									<Button
-										name="generate-typed-data"
-										type="button"
-										onClick={() =>
-											handleTypedDataGeneration(
-												form.values,
-											)
-										}
-									>
-										Create typed data for signing
-									</Button>
-									<Button
-										name="sign-typed-data"
-										onClick={() =>
-											signTypedDataAsync(typedData)
-										}
-									>
-										Sign
-									</Button>
-								</Group>
+								{MULTI_SIG_FUNCTIONS.includes(
+									selectedFunction,
+								) ? (
+									<Group grow>
+										<Button
+											name="generate-typed-data"
+											type="button"
+											onClick={() =>
+												handleTypedDataGeneration(
+													form.values,
+												)
+											}
+										>
+											Create typed data for signing
+										</Button>
+										<Button
+											name="sign-typed-data"
+											onClick={() =>
+												signTypedDataAsync(typedData)
+											}
+										>
+											Sign
+										</Button>
+									</Group>
+								) : (
+									<Group grow align="center">
+										<Stack align="center">
+											<Button
+												name="call-function"
+												type="button"
+												px="xl"
+											>
+												Call
+											</Button>
+										</Stack>
+									</Group>
+								)}
 							</Stack>
 						</form>
 						{typedData && (
@@ -414,8 +445,12 @@ const CardSoftStakingContract = () => {
 									{claimData.map((row, index) => (
 										<tr key={index}>
 											{Object.values(row).map(
-												(value: any, i) => (
-													<td key={i}>{value}</td>
+												(value: unknown, i) => (
+													<td key={i}>
+														{
+															value as React.ReactNode
+														}
+													</td>
 												),
 											)}
 										</tr>

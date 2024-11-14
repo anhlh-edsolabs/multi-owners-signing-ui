@@ -39,7 +39,7 @@ export const getFunction = (
 	if (!functionAbi) {
 		return {
 			functionAbi: null,
-			selector: null,
+			selector: "",
 		}
 	}
 

@@ -2,17 +2,12 @@
 import { ethers, TypedDataDomain } from "ethers";
 import { ClaimDataRaw } from "../types";
 import { iterateFunctionInputs, getFunction } from "./Utils.ts";
+import Constants from "../Constants.ts";
 
-import SOFTSTAKING_CONTRACT_ABI from "../abis/SoftStaking_ABI.json";
-const SOFTSTAKING_ADDRESS = import.meta.env.VITE_SOFTSTAKING_ADDRESS;
-
-export const Constants = { SOFTSTAKING_ADDRESS, SOFTSTAKING_CONTRACT_ABI };
-
-export const SoftStakingDomain: TypedDataDomain = {
+export const SoftStakingTypedDataDomain: TypedDataDomain = {
 	name: "SoftStaking",
 	version: "1",
-	chainId: 11155111,
-	verifyingContract: SOFTSTAKING_ADDRESS,
+	verifyingContract: Constants.SOFTSTAKING_ADDRESS,
 };
 
 export const convertRawDataToClaimData = (data: any): ClaimDataRaw[] => {
@@ -55,7 +50,7 @@ export const createFunctionCallTypedData = (
 
 	const { functionAbi, selector } = getFunction(
 		functionName,
-		SOFTSTAKING_CONTRACT_ABI,
+		Constants.SOFTSTAKING_CONTRACT_ABI,
 	);
 
 	if (!functionAbi) {
@@ -96,7 +91,7 @@ export const processInputValues = (inputValues: unknown[]) => {
 
 export const convertObjectListToArray = (
 	objectList: Record<string, unknown>[],
-): any[][] => {
+): unknown[][] => {
 	return objectList.map((object) => Object.values(object));
 };
 

@@ -1,3 +1,5 @@
+import { TypedDataDomain } from "ethers";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface InputAbi {
 	internalType: string;
@@ -46,4 +48,20 @@ export type FunctionCallFormData = {
 	functionName: string;
 	params: Array<any>;
 	nonce: number | null;
+};
+
+export type FunctionCallTypedData = {
+	domain: TypedDataDomain;
+	types: {
+		FunctionCall: {
+			name: string;
+			type: string;
+		}[];
+	};
+	primaryType: string;
+	message: {
+		nonce: number;
+		selector: string | "";
+		inputData: string;
+	};
 };
