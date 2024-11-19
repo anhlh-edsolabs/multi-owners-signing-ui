@@ -5,6 +5,7 @@ import {
 	Card,
 	CopyButton,
 	Group,
+	Space,
 	Stack,
 	Text,
 	Title,
@@ -68,7 +69,18 @@ function CardWallet() {
 						</Group>
 					)}
 				</Group>
-
+				{(status == undefined || status === "disconnected") && (
+					<Stack>
+						<Group spacing="xs" position="center">
+							<Text>
+								<Text span size="sm" fw="bold" color="gray.8">
+									Connect your wallet to access your balances
+								</Text>
+							</Text>
+							<Space h={28} w={40}></Space>
+						</Group>
+					</Stack>
+				)}
 				{status === "connected" && (
 					<Stack>
 						<Group spacing="xs" align="flex-start">

@@ -171,7 +171,7 @@ const CardSoftStakingContract = () => {
 				? [claimDataList]
 				: values.params;
 
-		domain.chainId = connectedChain?.id || 1;
+		domain.chainId = connectedChain?.id;
 
 		const typedData = createFunctionCallTypedData(
 			domain,

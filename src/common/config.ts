@@ -20,11 +20,12 @@ const wagmiAdapter = new WagmiAdapter({
 });
 
 export const config = {
-    adapters: [wagmiAdapter],
+	adapters: [wagmiAdapter],
+	defaultNetwork: mainnet,
 	networks,
 	metadata,
 	projectId,
 	features: {
 		analytics: false,
-	}
-}
+	},
+};
