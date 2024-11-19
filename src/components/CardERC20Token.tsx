@@ -1,29 +1,29 @@
 import {
-	Card,
-	Stack,
-	Group,
-	Title,
-	Text,
-	Avatar,
 	ActionIcon,
+	Avatar,
+	Card,
+	Group,
+	Stack,
+	Text,
+	Title,
 } from "@mantine/core";
-import { useAccount } from "wagmi";
-import TokenBalance from "./TokenBalance";
-// import ButtonTransfer from "./buttons/ButtonTransfer";
-import { sepolia } from "wagmi/chains";
+import { useAppKitAccount } from "@reown/appkit/react";
+
 import { IconExternalLink } from "@tabler/icons-react";
+import { useConnectedChain } from "../hooks/useConnectedChain";
+import TokenBalance from "./TokenBalance";
 
 const token = import.meta.env.VITE_WUSD_TOKEN_ADDRESS!;
 
 function CardERC20Token() {
-	// const { open: openConnection } = useWeb3Modal();
-	const { address, status } = useAccount();
+	const { address, status } = useAppKitAccount();
+	const formattedAddress = address as `0x${string}`;
+	const connectedChain = useConnectedChain();
 
 	return (
 		<Card shadow="sm" padding="lg" radius="md" withBorder>
 			<Stack>
 				<Group>
-					{/* <Title transform="uppercase" order={3}>WUSD Token</Title> */}
 					<Avatar
 						src="https://frontend-stg.swapflow.io/images/WUSD.png"
 						radius="xl"
@@ -47,7 +47,7 @@ function CardERC20Token() {
 						<ActionIcon
 							onClick={() =>
 								window.open(
-									`${sepolia.blockExplorers.default.url}/address/${token}`,
+									`${connectedChain?.blockExplorers?.default.url}/address/${token}`,
 								)
 							}
 						>
@@ -55,7 +55,10 @@ function CardERC20Token() {
 						</ActionIcon>
 					</Group>
 					{status === "connected" && (
-						<TokenBalance address={address} token={token} />
+						<TokenBalance
+							address={formattedAddress}
+							token={token}
+						/>
 					)}
 				</Stack>
 			</Stack>

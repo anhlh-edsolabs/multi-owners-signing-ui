@@ -11,26 +11,20 @@ import {
 	TextInput,
 	Title,
 } from "@mantine/core";
-import { Prism } from "@mantine/prism";
-import { IconTransitionRightFilled } from "@tabler/icons-react";
 
 import { useForm } from "@mantine/form";
-import { Config } from "@wagmi/core";
+import { Prism } from "@mantine/prism";
+import { IconTransitionRightFilled } from "@tabler/icons-react";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import {
-	useChainId,
-	useChains,
-	useReadContract,
-	useSignTypedData,
-} from "wagmi";
 
-import { config } from "../common/config.ts";
+import { useReadContract, useSignTypedData } from "wagmi";
+
 import {
 	ClaimData,
 	FunctionCallFormData,
 	FunctionCallTypedData,
-	ReadContractProps
+	ReadContractProps,
 } from "../common/types/";
 
 import {
@@ -38,10 +32,11 @@ import {
 	convertRawDataToClaimData,
 	createFunctionCallTypedData,
 	SoftStakingTypedDataDomain as domain,
-} from "../common/libs/SoftStakingEIP712.ts";
+} from "../common/libs/soft-staking-EIP712.ts";
 
-import Constants from "../common/Constants.ts";
-import { getFunction } from "../common/libs/Utils.ts";
+import Constants from "../common/constants";
+import { getFunction } from "../common/libs/utils";
+import { useConnectedChain } from "../hooks/useConnectedChain.ts";
 
 const SPECIAL_FUNCTION = "createClaimDataMultiple";
 const MULTI_SIG_FUNCTIONS = [
@@ -99,12 +94,8 @@ const ReadContract = ({
 };
 
 const CardSoftStakingContract = () => {
-	const chainId = useChainId();
-	const chains = useChains({ config });
+	const connectedChain = useConnectedChain();
 
-	const [connectedChain, setConnectedChain] = useState<
-		Config["chains"][number] | null
-	>(null);
 	const [selectedFunction, setSelectedFunction] = useState<string | null>(
 		null,
 	);
@@ -117,23 +108,12 @@ const CardSoftStakingContract = () => {
 		}[]
 	>([]);
 	const [claimDataList, setClaimDataList] = useState<unknown[][]>([]);
-	const [typedData, setTypedData] = useState<any>(null);
 	const [nonce, setNonce] = useState<string>("");
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const [typedData, setTypedData] = useState<any>(null);
 	const [signature, setSignature] = useState<string | null>(null);
 
 	const { signTypedDataAsync, data: signatureData } = useSignTypedData();
-
-	useEffect(() => {
-		if (chains && chainId) {
-			const matchedChain = chains.find((chain) => chain.id === chainId);
-			if (matchedChain) {
-				setConnectedChain(matchedChain);
-			}
-		}
-	}, [chains, chainId]);
-
-	console.log("Chains: ", chains);
-	console.log("Connected chain: ", connectedChain);
 
 	const form = useForm<FunctionCallFormData>({
 		initialValues: {
@@ -180,6 +160,7 @@ const CardSoftStakingContract = () => {
 
 		setSignature(null);
 		setTypedData(null);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedFunction, nonce]);
 
 	const handleTypedDataGeneration = (values: FunctionCallFormData) => {
@@ -189,6 +170,8 @@ const CardSoftStakingContract = () => {
 			selectedFunction === SPECIAL_FUNCTION && claimDataList.length > 0
 				? [claimDataList]
 				: values.params;
+
+		domain.chainId = connectedChain?.id || 1;
 
 		const typedData = createFunctionCallTypedData(
 			domain,

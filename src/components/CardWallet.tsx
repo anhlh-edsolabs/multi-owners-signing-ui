@@ -1,22 +1,30 @@
 import {
+	ActionIcon,
+	Avatar,
+	Button,
 	Card,
 	CopyButton,
-	Text,
-	Stack,
-	Button,
 	Group,
-	Avatar,
-	ActionIcon,
+	Stack,
+	Text,
 	Title,
 } from "@mantine/core";
+import {
+	useAppKit,
+	useAppKitAccount,
+	useDisconnect,
+} from "@reown/appkit/react";
 import { IconCheck, IconCopy, IconWallet } from "@tabler/icons-react";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { useAccount } from "wagmi";
 import TokenBalance from "./TokenBalance";
 
 function CardWallet() {
-	const { open: openConnection } = useWeb3Modal();
-	const { address, status } = useAccount();
+	const { open } = useAppKit();
+	const { address, status } = useAppKitAccount();
+	const formattedAddress = address as `0x${string}`;
+	const { disconnect } = useDisconnect();
+
+	console.log({ status });
+	console.log({ address });
 
 	return (
 		<Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -33,7 +41,34 @@ function CardWallet() {
 							Crypto Wallet
 						</Title>
 					</Stack>
+					{status === "connected" && (
+						<Group grow>
+							<Button
+								leftIcon={<IconWallet size="1rem" />}
+								onClick={() => disconnect()}
+								variant="filled"
+								color="dark"
+								size="xs"
+							>
+								Disconnect
+							</Button>
+						</Group>
+					)}
+					{status === "disconnected" && (
+						<Group position="center">
+							<Button
+								leftIcon={<IconWallet size="1rem" />}
+								onClick={() => open()}
+								variant="filled"
+								color="dark"
+								size="xs"
+							>
+								Connect wallet
+							</Button>
+						</Group>
+					)}
 				</Group>
+
 				{status === "connected" && (
 					<Stack>
 						<Group spacing="xs" align="flex-start">
@@ -43,7 +78,7 @@ function CardWallet() {
 									{address}
 								</Text>
 							</Text>
-							<CopyButton value={address}>
+							<CopyButton value={address as string}>
 								{({ copied, copy }) => (
 									<ActionIcon onClick={copy}>
 										{copied ? (
@@ -55,21 +90,8 @@ function CardWallet() {
 								)}
 							</CopyButton>
 						</Group>
-						<TokenBalance address={address} />
+						<TokenBalance address={formattedAddress} />
 					</Stack>
-				)}
-				{status === "disconnected" && (
-					<Group position="center">
-						<Button
-							leftIcon={<IconWallet size="1rem" />}
-							onClick={() => openConnection()}
-							variant="filled"
-							color="dark"
-							size="xs"
-						>
-							Connect wallet
-						</Button>
-					</Group>
 				)}
 			</Stack>
 		</Card>
