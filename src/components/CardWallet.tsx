@@ -54,7 +54,7 @@ function CardWallet() {
 							</Button>
 						</Group>
 					)}
-					{status === "disconnected" && (
+					{(status == undefined || status === "disconnected") && (
 						<Group position="center">
 							<Button
 								leftIcon={<IconWallet size="1rem" />}
