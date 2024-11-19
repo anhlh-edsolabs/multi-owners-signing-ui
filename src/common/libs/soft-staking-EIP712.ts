@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, TypedDataDomain } from "ethers";
-import Constants from "../constants";
+import Constants from "../constants.ts";
 import { ClaimDataRaw } from "../types";
-import { getFunction, iterateFunctionInputs } from "./utils";
+import { getFunction, iterateFunctionInputs } from "./utils.ts"
 
 export const SoftStakingTypedDataDomain: TypedDataDomain = {
 	name: "SoftStaking",
