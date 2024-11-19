@@ -34,8 +34,8 @@ import {
 	SoftStakingTypedDataDomain as domain,
 } from "../common/libs/soft-staking-EIP712.ts";
 
-import Constants from "../common/constants";
-import { getFunction } from "../common/libs/utils";
+import Constants from "../common/constants_.ts";
+import { getFunction } from "../common/libs/utils_.ts";
 import { useConnectedChain } from "../hooks/useConnectedChain.ts";
 
 const SPECIAL_FUNCTION = "createClaimDataMultiple";

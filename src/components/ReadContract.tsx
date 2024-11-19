@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useReadContract } from "wagmi";
-import Constants from "../common/constants";
+import Constants from "../common/constants_";
 import { ReadContractProps } from "../common/types";
 
 const ReadContract = ({
