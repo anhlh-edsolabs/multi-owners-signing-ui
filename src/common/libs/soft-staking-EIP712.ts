@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, TypedDataDomain } from "ethers";
+import Constants from "../constants";
 import { ClaimDataRaw } from "../types";
-import { iterateFunctionInputs, getFunction } from "./Utils.ts";
-import Constants from "../Constants.ts";
+import { getFunction, iterateFunctionInputs } from "./utils";
 
 export const SoftStakingTypedDataDomain: TypedDataDomain = {
 	name: "SoftStaking",
@@ -95,4 +95,5 @@ export const convertObjectListToArray = (
 	return objectList.map((object) => Object.values(object));
 };
 
-export {};
+export { };
+
