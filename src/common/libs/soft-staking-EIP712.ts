@@ -19,7 +19,7 @@ export const convertRawDataToClaimData = (data: any): ClaimDataRaw[] => {
 					parseInt(item.year.replace(/,/g, "")),
 					parseInt(item.month) - 1,
 					1,
-					0,
+					-8,
 					0,
 					0,
 				),
