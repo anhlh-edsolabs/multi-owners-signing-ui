@@ -44,6 +44,11 @@ export type ReadContractProps = {
 	onListening?: (data: any) => void;
 };
 
+export type WriteContractProps = {
+	funcName: string;
+	args?: any[];
+}
+
 export type FunctionCallFormData = {
 	functionName: string;
 	params: Array<any>;

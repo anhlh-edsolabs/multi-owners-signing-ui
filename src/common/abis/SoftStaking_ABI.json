@@ -54,6 +54,11 @@
 		"type": "error"
 	},
 	{
+		"inputs": [],
+		"name": "AlreadyInitialized",
+		"type": "error"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -99,6 +104,27 @@
 			}
 		],
 		"name": "ClaimedAlready",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "currentOwnerIndex",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "newOwnerIndex",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "duplicatedOwner",
+				"type": "address"
+			}
+		],
+		"name": "DuplicateOwner",
 		"type": "error"
 	},
 	{
@@ -151,23 +177,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "EnforcedPause",
+		"name": "EmptySignatures",
 		"type": "error"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "payload",
-				"type": "bytes"
-			},
-			{
-				"internalType": "bytes",
-				"name": "returnData",
-				"type": "bytes"
-			}
-		],
-		"name": "ExecutionFailed",
+		"inputs": [],
+		"name": "EnforcedPause",
 		"type": "error"
 	},
 	{
@@ -220,6 +235,22 @@
 	{
 		"inputs": [],
 		"name": "InvalidInitialization",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "required",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "actual",
+				"type": "uint256"
+			}
+		],
+		"name": "InvalidNumberOfSigners",
 		"type": "error"
 	},
 	{
@@ -289,6 +320,22 @@
 			}
 		],
 		"name": "SafeERC20FailedOperation",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "ownersLength",
+				"type": "uint256"
+			}
+		],
+		"name": "SignerThresholdMustBeEqualOrLessThanOwners",
 		"type": "error"
 	},
 	{
@@ -559,6 +606,19 @@
 		"inputs": [
 			{
 				"indexed": false,
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			}
+		],
+		"name": "SignerThresholdUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
 				"internalType": "address",
 				"name": "account",
 				"type": "address"
@@ -579,6 +639,19 @@
 		],
 		"name": "Upgraded",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "BASE_TOKEN",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -812,19 +885,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "getBaseToken",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -988,6 +1048,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getSignerThreshold",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "bytes32",
@@ -1058,6 +1131,24 @@
 			}
 		],
 		"name": "initialize",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint64",
+				"name": "version",
+				"type": "uint64"
+			}
+		],
+		"name": "initializeV2",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1202,6 +1293,19 @@
 			}
 		],
 		"name": "setPoolAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			}
+		],
+		"name": "setSignerThreshold",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

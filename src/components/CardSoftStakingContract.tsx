@@ -18,13 +18,12 @@ import { IconTransitionRightFilled } from "@tabler/icons-react";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 
-import { useReadContract, useSignTypedData } from "wagmi";
+import { useSignTypedData } from "wagmi";
 
 import {
 	ClaimData,
 	FunctionCallFormData,
 	FunctionCallTypedData,
-	ReadContractProps,
 } from "../common/types/";
 
 import {
@@ -33,6 +32,9 @@ import {
 	createFunctionCallTypedData,
 	SoftStakingTypedDataDomain as domain,
 } from "../common/libs/soft-staking-EIP712.ts";
+
+import ReadContract from "./ReadContract";
+import WriteContract from "./WriteContract";
 
 import Constants from "../common/constants";
 import { getFunction } from "../common/libs/utils";
@@ -69,28 +71,6 @@ const generateClaimDataList = (data: unknown): ClaimData[] => {
 		};
 	});
 	return claimDataList;
-};
-
-const ReadContract = ({
-	funcName,
-	children,
-	args,
-	onListening,
-}: ReadContractProps) => {
-	const { data, isSuccess } = useReadContract({
-		abi: Constants.SOFTSTAKING_CONTRACT_ABI,
-		address: Constants.SOFTSTAKING_ADDRESS,
-		functionName: funcName,
-		args: args,
-	});
-	console.log("Nonce after reading from contract:", data);
-
-	useEffect(() => {
-		if (isSuccess) {
-			onListening?.(data);
-		}
-	}, [isSuccess, data, onListening]);
-	return <>{children}</>;
 };
 
 const CardSoftStakingContract = () => {
@@ -341,17 +321,10 @@ const CardSoftStakingContract = () => {
 										</Button>
 									</Group>
 								) : (
-									<Group grow align="center">
-										<Stack align="center">
-											<Button
-												name="call-function"
-												type="button"
-												px="xl"
-											>
-												Call
-											</Button>
-										</Stack>
-									</Group>
+									<WriteContract
+										funcName={selectedFunction}
+										args={form.values.params}
+									/>
 								)}
 							</Stack>
 						</form>
