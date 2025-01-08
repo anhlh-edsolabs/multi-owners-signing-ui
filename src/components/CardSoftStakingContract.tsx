@@ -12,7 +12,7 @@ import {
 	Title,
 } from "@mantine/core";
 
-import { useForm } from "@mantine/form";
+// import { useForm } from "@mantine/form";
 import { Prism } from "@mantine/prism";
 import { IconTransitionRightFilled } from "@tabler/icons-react";
 import { ethers } from "ethers";
@@ -37,14 +37,21 @@ import ReadContract from "./ReadContract";
 import WriteContract from "./WriteContract";
 
 import Constants from "../common/constants";
+import { useFunctionCallForm } from "../hooks/useCustomForm.ts";
 import { getFunction } from "../common/libs/utils";
 import { useConnectedChain } from "../hooks/useConnectedChain.ts";
+import { useSignatureStore } from "../hooks/useSignatureStore.ts";
+import { useExecutionStore } from "../hooks/useExecutionStore.ts";
+import { useFunctionSelectionStore } from "../hooks/useFunctionSelectionStore.ts";
+import DisplayCombinedSignature from "./DisplayCombinedSignature.tsx";
+// import { useExecutionStore } from "../hooks/useExecutionStore.ts";
 
 const SPECIAL_FUNCTION = "createClaimDataMultiple";
 const MULTI_SIG_FUNCTIONS = [
 	"createClaimDataMultiple",
 	"createClaimData",
 	"changeOwner",
+	"setSignerThreshold",
 ];
 
 const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
@@ -76,9 +83,9 @@ const generateClaimDataList = (data: unknown): ClaimData[] => {
 const CardSoftStakingContract = () => {
 	const connectedChain = useConnectedChain();
 
-	const [selectedFunction, setSelectedFunction] = useState<string | null>(
-		null,
-	);
+	const { selectedFunction, setSelectedFunction } =
+		useFunctionSelectionStore();
+
 	const [claimData, setClaimData] = useState<
 		{
 			year: string;
@@ -91,17 +98,20 @@ const CardSoftStakingContract = () => {
 	const [nonce, setNonce] = useState<string>("");
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [typedData, setTypedData] = useState<any>(null);
-	const [signature, setSignature] = useState<string | null>(null);
+	// const [signature, setSignature] = useState<string | null>(null);
+
+	const { signature, setSignature } = useSignatureStore();
+	const {
+		selector,
+		calldata,
+		combinedSignature,
+		setExecutionData,
+		setCombinedSignature,
+	} = useExecutionStore();
 
 	const { signTypedDataAsync, data: signatureData } = useSignTypedData();
 
-	const form = useForm<FunctionCallFormData>({
-		initialValues: {
-			functionName: "",
-			params: [],
-			nonce: null,
-		},
-	});
+	const form = useFunctionCallForm();
 
 	console.log("Form: ", form.values);
 
@@ -114,9 +124,10 @@ const CardSoftStakingContract = () => {
 	useEffect(() => {
 		if (signatureData) {
 			console.log("Signature: ", signatureData);
+			// useSignatureStore((state) => state.setSignature(signatureData));
 			setSignature(signatureData);
 		}
-	}, [signatureData]);
+	}, [setSignature, signatureData]);
 
 	useEffect(() => {
 		if (selectedFunction === SPECIAL_FUNCTION) {
@@ -138,12 +149,15 @@ const CardSoftStakingContract = () => {
 		}
 		form.setFieldValue("nonce", parseInt(nonce));
 
-		setSignature(null);
+		setSignature("");
 		setTypedData(null);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedFunction, nonce]);
 
 	const handleTypedDataGeneration = (values: FunctionCallFormData) => {
+		// clear Execution store
+		setExecutionData("", "");
+		setCombinedSignature("");
 		console.log("HandleTypedDataGeneration:", values.params);
 
 		const paramValues =
@@ -162,10 +176,14 @@ const CardSoftStakingContract = () => {
 		// typedData.message.selector = typedData.message.selector || "";
 		console.log("TypedData", typedData);
 		setTypedData(typedData as FunctionCallTypedData);
+
+		setExecutionData(
+			typedData.message.selector,
+			typedData.message.inputData,
+		);
 	};
 
 	const handleInputValueChange = (index: number, value: string) => {
-		// form.setFieldValue(`params.${index}`, value);
 		console.log("Value before parsing:", value);
 		try {
 			const parsedValue = JSON.parse(value);
@@ -177,6 +195,22 @@ const CardSoftStakingContract = () => {
 		}
 
 		console.log("Form values:", form.values);
+	};
+
+	const handlePopulateExecutionData = () => {
+		form.setFieldValue("params.0", selector);
+		form.setFieldValue("params.1", calldata);
+		form.setFieldValue("params.2", combinedSignature);
+
+		console.log("Form abc:", form);
+
+		console.log("Populating execution data...");
+		console.log("Selector:", form.getInputProps("params.0").value);
+		console.log("Calldata:", form.getInputProps("params.1").value);
+		console.log(
+			"Combined signature:",
+			form.getInputProps("params.2").value,
+		);
 	};
 
 	return (
@@ -262,6 +296,8 @@ const CardSoftStakingContract = () => {
 													key={index}
 													label={input.name}
 													placeholder="Input tuple as arrays"
+													withAsterisk
+													validationError="Invalid JSON"
 													onChange={(value) =>
 														handleInputValueChange(
 															index,
@@ -280,12 +316,16 @@ const CardSoftStakingContract = () => {
 										return (
 											<TextInput
 												name={`params.${index}`}
+												// name={`params.${input.name}`}
 												key={index}
 												label={input.name}
 												size="sm"
-												{...form.getInputProps(
-													`params.${index}`,
-												)}
+												withAsterisk
+												value={
+													form.getInputProps(
+														`params.${index}`,
+													).value
+												}
 												onChange={(event) =>
 													handleInputValueChange(
 														index,
@@ -321,10 +361,32 @@ const CardSoftStakingContract = () => {
 										</Button>
 									</Group>
 								) : (
-									<WriteContract
-										funcName={selectedFunction}
-										args={form.values.params}
-									/>
+									<>
+										{/* {selectedFunction ==
+											EXECUTE_FUNCTION && (
+											<Group grow align="center">
+												<Stack align="center">
+													<Button
+														name="call-function"
+														type="button"
+														px="xl"
+														onClick={
+															handlePopulateExecutionData
+														}
+													>
+														Populate execution data
+													</Button>
+												</Stack>
+											</Group>
+										)} */}
+										<WriteContract
+											funcName={selectedFunction}
+											args={form.values.params}
+											customHandler={
+												handlePopulateExecutionData
+											}
+										/>
+									</>
 								)}
 							</Stack>
 						</form>
@@ -374,6 +436,7 @@ const CardSoftStakingContract = () => {
 								<Prism language="json">{signature}</Prism>
 							</Stack>
 						)}
+						<DisplayCombinedSignature />
 					</Stack>
 				)}
 

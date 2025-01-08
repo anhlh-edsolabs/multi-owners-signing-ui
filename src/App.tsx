@@ -2,6 +2,7 @@ import { Container, Grid, Space, Stack } from "@mantine/core";
 import CardERC20Token from "./components/CardERC20Token";
 import CardSoftStakingContract from "./components/CardSoftStakingContract";
 import CardWallet from "./components/CardWallet";
+import CardCombineSignatures from "./components/CardCombineSignatures";
 
 export default function App() {
 	return (
@@ -18,6 +19,10 @@ export default function App() {
 			<Space h="md" />
 			<Stack>
 				<CardSoftStakingContract />
+			</Stack>
+			<Space h="md" />
+			<Stack>
+				<CardCombineSignatures />
 			</Stack>
 		</Container>
 	);

@@ -1,5 +1,6 @@
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { AppKitNetwork, mainnet, sepolia } from "@reown/appkit/networks";
+import { AppKitNetwork, Chain, mainnet, sepolia } from "@reown/appkit/networks";
+import { http, createConfig } from "@wagmi/core";
 
 const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID!;
 
@@ -29,3 +30,11 @@ export const config = {
 		analytics: false,
 	},
 };
+
+export const wagmiConfig = createConfig({
+	chains: networks as unknown as readonly [Chain, ...Chain[]],
+	transports: {
+		[networks[0].id]: http(),
+		[networks[1].id]: http(),
+	},
+});

@@ -47,6 +47,7 @@ export type ReadContractProps = {
 export type WriteContractProps = {
 	funcName: string;
 	args?: any[];
+	customHandler?: () => void;
 }
 
 export type FunctionCallFormData = {
@@ -54,6 +55,12 @@ export type FunctionCallFormData = {
 	params: Array<any>;
 	nonce: number | null;
 };
+
+export type SignaturesFormData = {
+	signature1: string;
+	signature2: string;
+	signature3: string;
+}
 
 export type FunctionCallTypedData = {
 	domain: TypedDataDomain;
