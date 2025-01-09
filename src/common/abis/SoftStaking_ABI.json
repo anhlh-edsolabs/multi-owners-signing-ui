@@ -54,11 +54,6 @@
 		"type": "error"
 	},
 	{
-		"inputs": [],
-		"name": "AlreadyInitialized",
-		"type": "error"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -524,6 +519,19 @@
 			}
 		],
 		"name": "PoolAddressSet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			}
+		],
+		"name": "RewardThresholdUpdated",
 		"type": "event"
 	},
 	{
@@ -1029,6 +1037,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getRewardThreshold",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "bytes32",
@@ -1139,7 +1160,12 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "threshold",
+				"name": "signerThreshold",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "rewardThreshold",
 				"type": "uint256"
 			},
 			{
@@ -1293,6 +1319,19 @@
 			}
 		],
 		"name": "setPoolAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "threshold",
+				"type": "uint256"
+			}
+		],
+		"name": "setRewardThreshold",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

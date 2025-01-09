@@ -52,6 +52,7 @@ const MULTI_SIG_FUNCTIONS = [
 	"createClaimData",
 	"changeOwner",
 	"setSignerThreshold",
+	"setRewardThreshold",
 ];
 
 const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
@@ -188,10 +189,13 @@ const CardSoftStakingContract = () => {
 		try {
 			const parsedValue = JSON.parse(value);
 
-			form.setFieldValue(`params.${index}`, parsedValue);
+			form.setFieldValue(
+				`params.${index}`,
+				typeof parsedValue === "object" ? parsedValue : value,
+			);
 		} catch {
 			console.log("Not a JSON");
-			form.setFieldValue(`params.${index}`, value);
+			form.setFieldValue(`params.${index}`, value?.toString());
 		}
 
 		console.log("Form values:", form.values);
@@ -298,10 +302,11 @@ const CardSoftStakingContract = () => {
 													placeholder="Input tuple as arrays"
 													withAsterisk
 													validationError="Invalid JSON"
-													onChange={(value) =>
+													onBlur={(event) =>
 														handleInputValueChange(
 															index,
-															value,
+															event.currentTarget
+																.value,
 														)
 													}
 													value={JSON.stringify(
@@ -361,32 +366,13 @@ const CardSoftStakingContract = () => {
 										</Button>
 									</Group>
 								) : (
-									<>
-										{/* {selectedFunction ==
-											EXECUTE_FUNCTION && (
-											<Group grow align="center">
-												<Stack align="center">
-													<Button
-														name="call-function"
-														type="button"
-														px="xl"
-														onClick={
-															handlePopulateExecutionData
-														}
-													>
-														Populate execution data
-													</Button>
-												</Stack>
-											</Group>
-										)} */}
-										<WriteContract
-											funcName={selectedFunction}
-											args={form.values.params}
-											customHandler={
-												handlePopulateExecutionData
-											}
-										/>
-									</>
+									<WriteContract
+										funcName={selectedFunction}
+										args={form.values.params}
+										customHandler={
+											handlePopulateExecutionData
+										}
+									/>
 								)}
 							</Stack>
 						</form>

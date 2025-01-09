@@ -6,19 +6,19 @@ import { WriteContractProps } from "../common/types";
 import { useConnectedChain } from "../hooks/useConnectedChain.ts";
 import { useFunctionSelectionStore } from "../hooks/useFunctionSelectionStore.ts";
 
-import { Button, Group, Text } from "@mantine/core";
+import { Button, Group, Text, Stack } from "@mantine/core";
 import { IconTransitionRightFilled } from "@tabler/icons-react";
 import {
-    type BaseError,
-    useWaitForTransactionReceipt,
-    useWriteContract,
+	type BaseError,
+	useWaitForTransactionReceipt,
+	useWriteContract,
 } from "wagmi";
 
 import {
-    // estimateGas,
-    getGasPrice,
-    simulateContract,
-    SimulateContractErrorType,
+	// estimateGas,
+	getGasPrice,
+	simulateContract,
+	SimulateContractErrorType,
 } from "@wagmi/core";
 
 // import { useAppKitAccount } from "@reown/appkit/react";
@@ -33,7 +33,7 @@ const WriteContract = ({
 	customHandler,
 }: WriteContractProps) => {
 	const connectedChain = useConnectedChain();
-    // const { address } = useAppKitAccount();
+	// const { address } = useAppKitAccount();
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -46,9 +46,8 @@ const WriteContract = ({
 
 	const { selectedFunction } = useFunctionSelectionStore();
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	// const estimateGasFunctionCall = async (funcName: string, args: any[]) => {
-		
+
 	// 	const contract = new ethers.Contract(
 	// 		Constants.SOFTSTAKING_ADDRESS,
 	// 		Constants.SOFTSTAKING_CONTRACT_ABI,
@@ -88,7 +87,7 @@ const WriteContract = ({
 			console.log("Simulation result:", simulation);
 
 			// execute contract call
-            console.log("Submitting transaction...");
+			console.log("Submitting transaction...");
 			writeContract({
 				abi: Constants.SOFTSTAKING_CONTRACT_ABI,
 				address: Constants.SOFTSTAKING_ADDRESS,
@@ -123,31 +122,33 @@ const WriteContract = ({
 					{isPending ? "Confirming..." : "Call selected function"}
 				</Button>
 			</Group>
-			<Group>
-				{hash && (
-					<Text>
-						Transaction hash:{" "}
-						<Text span size="sm" fw="bold" color="gray.8">
-							<Button
-								disabled={isPending}
-								rightIcon={
-									<IconTransitionRightFilled size="1rem" />
-								}
-								onClick={() =>
-									window.open(
-										`${connectedChain?.blockExplorers?.default.url}/tx/${hash}`,
-									)
-								}
-								variant="white"
-								color="blue"
-							>
-								{hash}
-							</Button>
+			<Group grow align="center">
+				<Stack align="center">
+					{hash && (
+						<Text>
+							Transaction hash:{" "}
+							<Text span size="sm" fw="bold" color="gray.8">
+								<Button
+									disabled={isPending}
+									rightIcon={
+										<IconTransitionRightFilled size="1rem" />
+									}
+									onClick={() =>
+										window.open(
+											`${connectedChain?.blockExplorers?.default.url}/tx/${hash}`,
+										)
+									}
+									variant="white"
+									color="blue"
+								>
+									{hash}
+								</Button>
+							</Text>
 						</Text>
-					</Text>
-				)}
-				{isConfirming && <Text>Waiting for confirmation...</Text>}
-				{isConfirmed && <Text>Transaction confirmed.</Text>}
+					)}
+					{isConfirming && <Text color="orange">Waiting for confirmation...</Text>}
+					{isConfirmed && <Text color="green">Transaction confirmed.</Text>}
+				</Stack>
 				{error && (
 					<Text
 						variant="text"
