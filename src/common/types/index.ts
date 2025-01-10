@@ -37,6 +37,15 @@ export type ClaimData = {
 	accessKey: string;
 };
 
+export type ContractInfoProps = {
+	title: string;
+	address: string;
+}
+
+export type ContractFunctionProps = {
+	abi: any[];
+}
+
 export type ReadContractProps = {
 	funcName: string;
 	children?: React.ReactNode;
@@ -47,7 +56,6 @@ export type ReadContractProps = {
 export type WriteContractProps = {
 	funcName: string;
 	args?: any[];
-	customHandler?: () => void;
 }
 
 export type FunctionCallFormData = {

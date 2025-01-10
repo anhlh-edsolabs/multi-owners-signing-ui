@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { wagmiConfig as config } from "../common/config";
-import Constants from "../common/constants";
-import { WriteContractProps } from "../common/types";
-import { useConnectedChain } from "../hooks/useConnectedChain.ts";
-import { useFunctionSelectionStore } from "../hooks/useFunctionSelectionStore.ts";
+import { wagmiConfig as config } from "../../common/config.ts";
+import Constants from "../../common/constants.ts";
+import { WriteContractProps } from "../../common/types/index.ts";
+import { useConnectedChain } from "../../hooks/useConnectedChain.ts";
+import { useExecutionStore } from "../../hooks/useExecutionStore.ts";
+import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm.ts";
+import { useFunctionSelectionStore } from "../../hooks/useFunctionSelectionStore.ts";
 
 import { Button, Group, Text, Stack } from "@mantine/core";
 import { IconTransitionRightFilled } from "@tabler/icons-react";
@@ -14,26 +16,12 @@ import {
 	useWriteContract,
 } from "wagmi";
 
-import {
-	// estimateGas,
-	getGasPrice,
-	simulateContract,
-	SimulateContractErrorType,
-} from "@wagmi/core";
-
-// import { useAppKitAccount } from "@reown/appkit/react";
-
-import { ethers } from "ethers";
+import { simulateContract, SimulateContractErrorType } from "@wagmi/core";
 
 const EXECUTE_FUNCTION = "execute";
 
-const WriteContract = ({
-	funcName,
-	args,
-	customHandler,
-}: WriteContractProps) => {
+const WriteContract = ({ funcName, args }: WriteContractProps) => {
 	const connectedChain = useConnectedChain();
-	// const { address } = useAppKitAccount();
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -45,36 +33,21 @@ const WriteContract = ({
 		});
 
 	const { selectedFunction } = useFunctionSelectionStore();
+	const { selector, calldata, combinedSignature } = useExecutionStore();
+	const form = useFunctionCallFormContext();
 
-	// const estimateGasFunctionCall = async (funcName: string, args: any[]) => {
-
-	// 	const contract = new ethers.Contract(
-	// 		Constants.SOFTSTAKING_ADDRESS,
-	// 		Constants.SOFTSTAKING_CONTRACT_ABI,
-	// 	);
-
-	// 	console.log("Estimating gas...");
-	// 	const txData = contract.interface.encodeFunctionData(funcName, args);
-	// 	const estimatedGas = await estimateGas(config, {
-	// 		to: Constants.SOFTSTAKING_ADDRESS,
-	// 		data: txData as `0x${string}`,
-	// 		account: address as `0x${string}`,
-	// 		value: BigInt(0),
-	// 		type: "eip1559",
-	// 	});
-
-	// 	console.log("Estimated gas:", estimatedGas);
-	// };
+	const handlePopulateExecutionData = () => {
+		form.setFieldValue("params.0", selector);
+		form.setFieldValue("params.1", calldata);
+		form.setFieldValue("params.2", combinedSignature);
+	};
 
 	const handleWriteContract = async (funcName: string, args: any[]) => {
 		try {
 			setErrorMessage(null);
+
 			console.log("Function Name:", funcName);
 			console.log("Arguments:", args);
-
-			console.log("Acquiring gas price...");
-			const gasPrice = await getGasPrice(config);
-			console.log("Gas price:", ethers.formatUnits(gasPrice, "gwei"));
 
 			// simulate contract call
 			const simulation = await simulateContract(config, {
@@ -105,10 +78,15 @@ const WriteContract = ({
 			<Group grow align="center">
 				{selectedFunction == EXECUTE_FUNCTION && (
 					<Button
+						disabled={
+							selector === "" ||
+							calldata === "" ||
+							combinedSignature === ""
+						}
 						name="call-function"
 						type="button"
 						px="xl"
-						onClick={customHandler}
+						onClick={handlePopulateExecutionData}
 					>
 						Populate execution data
 					</Button>
@@ -122,9 +100,9 @@ const WriteContract = ({
 					{isPending ? "Confirming..." : "Call selected function"}
 				</Button>
 			</Group>
-			<Group grow align="center">
-				<Stack align="center">
-					{hash && (
+			{hash && (
+				<Group grow align="center">
+					<Stack align="center">
 						<Text>
 							Transaction hash:{" "}
 							<Text span size="sm" fw="bold" color="gray.8">
@@ -145,32 +123,44 @@ const WriteContract = ({
 								</Button>
 							</Text>
 						</Text>
-					)}
-					{isConfirming && <Text color="orange">Waiting for confirmation...</Text>}
-					{isConfirmed && <Text color="green">Transaction confirmed.</Text>}
-				</Stack>
-				{error && (
-					<Text
-						variant="text"
-						color="red"
-						style={{ lineBreak: "anywhere" }}
-					>
-						{(error as BaseError).metaMessages?.[0] +
-							" " +
-							(error as BaseError).metaMessages?.[1] +
-							" " || error.message}
-					</Text>
-				)}
-				{errorMessage && (
-					<Text
-						variant="text"
-						color="red"
-						style={{ lineBreak: "anywhere" }}
-					>
-						{errorMessage}
-					</Text>
-				)}
-			</Group>
+						{isConfirming && (
+							<Text color="orange">
+								Waiting for confirmation...
+							</Text>
+						)}
+						{isConfirmed && (
+							<Text color="green">Transaction confirmed.</Text>
+						)}
+					</Stack>
+				</Group>
+			)}
+			{(error || errorMessage) && (
+				<Group grow align="center">
+					<Stack align="center">
+						{error && (
+							<Text
+								variant="text"
+								color="red"
+								style={{ lineBreak: "anywhere" }}
+							>
+								{(error as BaseError).metaMessages?.[0] +
+									" " +
+									(error as BaseError).metaMessages?.[1] +
+									" " || error.message}
+							</Text>
+						)}
+						{errorMessage && (
+							<Text
+								variant="text"
+								color="red"
+								style={{ lineBreak: "anywhere" }}
+							>
+								{errorMessage}
+							</Text>
+						)}
+					</Stack>
+				</Group>
+			)}
 		</>
 	);
 };

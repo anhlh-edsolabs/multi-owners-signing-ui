@@ -10,8 +10,8 @@ import {
 import { useAppKitAccount } from "@reown/appkit/react";
 
 import { IconExternalLink } from "@tabler/icons-react";
-import { useConnectedChain } from "../hooks/useConnectedChain";
-import TokenBalance from "./TokenBalance";
+import { useConnectedChain } from "../../hooks/useConnectedChain";
+import TokenBalance from "../controls/TokenBalance";
 
 const token = import.meta.env.VITE_WUSD_TOKEN_ADDRESS!;
 

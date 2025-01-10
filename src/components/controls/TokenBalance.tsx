@@ -1,7 +1,7 @@
 import { Stack, Text } from "@mantine/core";
 import { formatUnits } from "ethers";
 import { type BaseError } from "wagmi";
-import { useTokenBalance } from "../hooks/useTokenBalance";
+import { useTokenBalance } from "../../hooks/useTokenBalance";
 
 function TokenBalance({
 	address,

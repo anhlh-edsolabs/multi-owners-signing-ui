@@ -9,11 +9,11 @@ import {
 
 import { useForm } from "@mantine/form";
 
-import { SignaturesFormData } from "../common/types";
-import { useExecutionStore } from "../hooks/useExecutionStore.ts";
-import { useSignatureStore } from "../hooks/useSignatureStore.ts";
+import { SignaturesFormData } from "../../common/types/index.ts";
+import { useExecutionStore } from "../../hooks/useExecutionStore.ts";
+import { useSignatureStore } from "../../hooks/useSignatureStore.ts";
 
-import DisplayCombinedSignature from "./DisplayCombinedSignature.tsx";
+import CombinedSignature from "../controls/CombinedSignature.tsx";
 
 import { ethers } from "ethers";
 
@@ -86,7 +86,7 @@ const CardCombineSignatures = () => {
 					Combine signatures
 				</Button>
 			</Stack>
-			<DisplayCombinedSignature />
+			<CombinedSignature />
 		</Card>
 	);
 };

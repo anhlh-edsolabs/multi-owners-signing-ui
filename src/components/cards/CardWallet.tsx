@@ -16,7 +16,7 @@ import {
 	useDisconnect,
 } from "@reown/appkit/react";
 import { IconCheck, IconCopy, IconWallet } from "@tabler/icons-react";
-import TokenBalance from "./TokenBalance";
+import TokenBalance from "../controls/TokenBalance";
 
 function CardWallet() {
 	const { open } = useAppKit();
