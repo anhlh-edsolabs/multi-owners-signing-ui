@@ -19,9 +19,12 @@ import { useSignTypedData } from "wagmi";
 
 import {
 	ClaimData,
+	APIRewardDataAdapter,
 	FunctionCallFormData,
 	FunctionCallTypedData,
 } from "../../common/types/index.ts";
+
+import getSoftStakingData from "../../common/data/soft-staking-data";
 
 import {
 	convertObjectListToArray,
@@ -65,15 +68,20 @@ const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
 		item.stateMutability !== "pure",
 );
 
-const generateClaimDataList = (data: unknown): ClaimData[] => {
+const generateClaimDataList = (data: APIRewardDataAdapter[]): ClaimData[] => {
 	const claimDataRawList = convertRawDataToClaimData(data);
 
 	const accessKeys: string[] = [];
 	const claimDataList: ClaimData[] = claimDataRawList.map((item) => {
 		const accessKey = ethers.solidityPackedKeccak256(
-			["address", "uint256", "uint256"],
-			[item.claimer, item.claimableTimestamp, item.amount],
+			["address", "uint48", "uint256"],
+			[
+				item.claimer,
+				item.claimableTimestamp,
+				ethers.parseEther(item.amount),
+			],
 		);
+
 		accessKeys.push(accessKey);
 
 		return {
@@ -89,14 +97,7 @@ const CardSoftStakingContract = () => {
 
 	const { selectedFunction } = useFunctionSelectionStore();
 
-	const [claimData, setClaimData] = useState<
-		{
-			year: string;
-			month: string;
-			wallet_address: string;
-			amount_reward: string;
-		}[]
-	>([]);
+	const [claimData, setClaimData] = useState<APIRewardDataAdapter[]>([]);
 	const [claimDataList, setClaimDataList] = useState<unknown[][]>([]);
 	const [nonce, setNonce] = useState<string>("");
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,21 +129,18 @@ const CardSoftStakingContract = () => {
 
 	useEffect(() => {
 		if (selectedFunction === SPECIAL_FUNCTION) {
-			import("../../common/data/soft_staking_data.json")
+			getSoftStakingData(2024, 12)
 				.then((data) => {
-					setClaimData(data.default);
-					const claimDataRawList = generateClaimDataList(
-						data.default,
-					);
-					// setClaimDataList(claimDataList);
-					console.log(claimDataRawList);
+					setClaimData(data);
+					const claimDataRawList = generateClaimDataList(data);
 
+					console.log("claimDataRawList:", claimDataRawList);
 					const claimDataList =
 						convertObjectListToArray(claimDataRawList);
-					console.log(claimDataList);
+					console.log("claimDataList:", claimDataList);
 					setClaimDataList(claimDataList);
 				})
-				.catch((error) => console.error("Error loading data:", error));
+				.catch((error) => console.error("Error:", error));
 		}
 		form.setFieldValue("nonce", parseInt(nonce));
 
@@ -378,7 +376,7 @@ const CardSoftStakingContract = () => {
 						</Stack>
 					)}
 
-					{selectedFunction === "createClaimDataMultiple" &&
+					{selectedFunction === SPECIAL_FUNCTION &&
 						claimData.length > 0 && (
 							<Stack spacing="lg">
 								<Space h="md" />

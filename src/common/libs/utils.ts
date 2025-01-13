@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FunctionFragment } from "ethers";
-import { FunctionInput } from "../types";
+import { AbiIO } from "../types";
 
 export const iterateFunctionInputs = (
-	inputs: FunctionInput[],
+	inputs: AbiIO[],
 	parentTypeIsTuple: boolean = false,
 ): string[] => {
 	const result = inputs

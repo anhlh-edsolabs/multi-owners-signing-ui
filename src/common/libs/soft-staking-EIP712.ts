@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ethers, TypedDataDomain } from "ethers";
 import Constants from "../constants";
-import { ClaimDataRaw } from "../types";
+import { ClaimData, APIRewardDataAdapter } from "../types";
 import { getFunction, iterateFunctionInputs } from "./utils";
 
 export const SoftStakingTypedDataDomain: TypedDataDomain = {
@@ -10,26 +10,13 @@ export const SoftStakingTypedDataDomain: TypedDataDomain = {
 	verifyingContract: Constants.SOFTSTAKING_ADDRESS,
 };
 
-export const convertRawDataToClaimData = (data: any): ClaimDataRaw[] => {
-	const convertedData: ClaimDataRaw[] = data.map((item: any) => ({
-		claimer: item.wallet_address,
-		claimableTimestamp:
-			new Date(
-				Date.UTC(
-					parseInt(item.year.replace(/,/g, "")),
-					parseInt(item.month) - 1,
-					1,
-					-8,
-					0,
-					0,
-				),
-			).getTime() / 1000,
-		amount: ethers
-			.parseUnits(
-				parseFloat(item.amount_reward.replace(/,/g, "")).toString(),
-				6,
-			)
-			.toString(10),
+export const convertRawDataToClaimData = (
+	data: APIRewardDataAdapter[],
+): ClaimData[] => {
+	const convertedData: ClaimData[] = data.map((item: any) => ({
+		claimer: item.walletAddress,
+		claimableTimestamp: item.claimableTimestamp,
+		amount: ethers.parseEther(item.amountReward).toString(10),
 	}));
 	return convertedData;
 };
@@ -95,5 +82,4 @@ export const convertObjectListToArray = (
 	return objectList.map((object) => Object.values(object));
 };
 
-export { };
-
+export {};
