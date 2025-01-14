@@ -1,8 +1,8 @@
 import { Group, Select } from "@mantine/core";
-import { getFunction } from "../../common/libs/utils.ts";
-import { AbiItem, ContractFunctionProps } from "../../common/types/index.ts";
-import { useFunctionSelectionStore } from "../../hooks/useFunctionSelectionStore.ts";
-import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm.ts";
+import { getFunction } from "../../common/libs/utils";
+import { AbiItem, ContractFunctionProps } from "../../common/types";
+import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
+import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
 
 const ContractFunctions = ({ abi }: ContractFunctionProps) => {
 	const WriteFunctions = abi.filter(

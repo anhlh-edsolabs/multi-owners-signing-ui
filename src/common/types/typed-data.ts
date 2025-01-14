@@ -1,17 +1,26 @@
-import { TypedDataDomain } from "ethers";
+import { TypedDataField } from "ethers";
 
 export type FunctionCallTypedData = {
 	domain: TypedDataDomain;
-	types: {
-		FunctionCall: {
-			name: string;
-			type: string;
-		}[];
-	};
+	types: Record<string, TypedDataField[]>;
 	primaryType: string;
-	message: {
-		nonce: number;
-		selector: string | "";
-		inputData: string;
-	};
+	message: FunctionCallData;
 };
+
+export type TypedDataDomain = {
+    chainId?: number | undefined;
+    name?: string;
+    salt?: `0x${string}`;
+    verifyingContract?: `0x${string}`;
+    version?: string;
+}
+
+export type FunctionCallType = {
+    FunctionCall: Record<string, TypedDataField[]>;
+}
+
+export type FunctionCallData = {
+    nonce: number;
+    selector: string | "";
+    inputData: string;
+}

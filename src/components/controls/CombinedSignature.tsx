@@ -1,6 +1,6 @@
 import { Space, Stack, Title } from "@mantine/core";
 import { Prism } from "@mantine/prism";
-import { useExecutionStore } from "../../hooks/useExecutionStore.ts";
+import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
 
 const CombinedSignature = () => {
 	const { combinedSignature } = useExecutionStore();

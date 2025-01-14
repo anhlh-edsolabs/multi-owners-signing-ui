@@ -15,7 +15,7 @@ async function getSoftStakingData(
 		month,
 		year,
 		typedata: 1,
-		status: 0,
+		status: 1,
 	};
 
 	try {

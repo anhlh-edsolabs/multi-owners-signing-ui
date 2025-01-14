@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ethers, TypedDataDomain } from "ethers";
+import { ethers, TypedDataField } from "ethers";
 import Constants from "../constants";
-import { ClaimData, APIRewardDataAdapter } from "../types";
+import { APIRewardDataAdapter, ClaimData, TypedDataDomain } from "../types";
 import { getFunction, iterateFunctionInputs } from "./utils";
 
-export const SoftStakingTypedDataDomain: TypedDataDomain = {
+export const SoftStakingDomain: TypedDataDomain = {
 	name: "SoftStaking",
 	version: "1",
 	verifyingContract: Constants.SOFTSTAKING_ADDRESS,
@@ -27,13 +27,13 @@ export const createFunctionCallTypedData = (
 	nonce: number,
 	inputValues: unknown[],
 ) => {
-	const FunctionCallType = {
+	const functionCallType = {
 		FunctionCall: [
 			{ name: "nonce", type: "uint256" },
 			{ name: "selector", type: "bytes4" },
 			{ name: "inputData", type: "bytes" },
 		],
-	};
+	} as Record<string, TypedDataField[]>;
 
 	const { functionAbi, selector } = getFunction(
 		functionName,
@@ -59,8 +59,8 @@ export const createFunctionCallTypedData = (
 
 	return {
 		domain,
-		types: FunctionCallType,
-		primaryType: Object.keys(FunctionCallType)[0],
+		types: functionCallType,
+		primaryType: Object.keys(functionCallType)[0],
 		message,
 	};
 };
@@ -77,8 +77,8 @@ export const processInputValues = (inputValues: unknown[]) => {
 };
 
 export const convertObjectListToArray = (
-	objectList: Record<string, unknown>[],
-): unknown[][] => {
+	objectList: Record<string, string | number>[],
+): (string | number)[][] => {
 	return objectList.map((object) => Object.values(object));
 };
 

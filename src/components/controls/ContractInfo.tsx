@@ -1,9 +1,9 @@
 import { Button, Group, Stack, Text, Title } from "@mantine/core";
 import { IconTransitionRightFilled } from "@tabler/icons-react";
 
-import { ContractInfoProps } from "../../common/types/index.ts";
+import { ContractInfoProps } from "../../common/types/index";
 
-import { useConnectedChain } from "../../hooks/useConnectedChain.ts";
+import { useConnectedChain } from "../../hooks/useConnectedChain";
 
 const ContractInfo = ({ title, address }: ContractInfoProps) => {
 	const connectedChain = useConnectedChain();

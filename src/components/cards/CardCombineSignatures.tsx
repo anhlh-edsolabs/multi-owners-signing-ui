@@ -9,11 +9,11 @@ import {
 
 import { useForm } from "@mantine/form";
 
-import { SignaturesFormData } from "../../common/types/index.ts";
-import { useExecutionStore } from "../../hooks/useExecutionStore.ts";
-import { useSignatureStore } from "../../hooks/useSignatureStore.ts";
+import { SignaturesFormData } from "../../common/types/index";
+import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
+import { useSignatureStore } from "../../hooks/stores/useSignatureStore";
 
-import CombinedSignature from "../controls/CombinedSignature.tsx";
+import CombinedSignature from "../controls/CombinedSignature";
 
 import { ethers } from "ethers";
 
