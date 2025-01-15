@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { wagmiConfig as config } from "../../common/config";
-import Constants from "../../common/constants";
-import { WriteContractProps } from "../../common/types/index";
-import { useConnectedChain } from "../../hooks/useConnectedChain";
-import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
-import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
-import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 
-import { Button, Group, Text, Stack } from "@mantine/core";
+import { Button, Group, Stack, Text } from "@mantine/core";
 import { IconTransitionRightFilled } from "@tabler/icons-react";
 import {
 	type BaseError,
@@ -18,10 +11,19 @@ import {
 
 import { simulateContract, SimulateContractErrorType } from "@wagmi/core";
 
+import { wagmiConfig as config } from "../../common/config";
+import Constants from "../../common/constants";
+import { WriteContractProps } from "../../common/types/index";
+
+import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
+import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
+import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
+import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
+
 const EXECUTE_FUNCTION = "execute";
 
 const WriteContract = ({ funcName, args }: WriteContractProps) => {
-	const connectedChain = useConnectedChain();
+	const { connectedChain } = useChainConnectionStore();
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -35,6 +37,8 @@ const WriteContract = ({ funcName, args }: WriteContractProps) => {
 	const { selectedFunction } = useFunctionSelectionStore();
 	const { selector, calldata, combinedSignature } = useExecutionStore();
 	const form = useFunctionCallFormContext();
+
+	console.log("Config from WriteContract:", config.state);
 
 	const handlePopulateExecutionData = () => {
 		form.setFieldValue("params.0", selector);

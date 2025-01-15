@@ -13,6 +13,8 @@ const TypedDataView = () => {
 	const { selectedFunction } = useFunctionSelectionStore();
 	const { signature } = useSignatureStore();
 
+	console.log("Typed data:", typedData);
+
 	return (
 		<>
 			{selectedFunction && typedData && (

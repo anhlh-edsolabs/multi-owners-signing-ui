@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
 	Group,
 	JsonInput,
@@ -35,6 +36,10 @@ const SoftStakingFunctionInput = ({
 
 	const { selectedFunction } = useFunctionSelectionStore();
 
+	const inputRefs = useRef<(HTMLInputElement | HTMLTextAreaElement | null)[]>(
+		[],
+	);
+
 	const handleInputValueChange = (index: number, value: string) => {
 		try {
 			const parsedValue = JSON.parse(value);
@@ -45,7 +50,13 @@ const SoftStakingFunctionInput = ({
 			);
 		} catch {
 			console.log("Not a JSON");
-			form.setFieldValue(`params.${index}`, value?.toString());
+			// form.setFieldValue(`params.${index}`, value?.toString());
+
+			if (value || value !== "") {
+				form.setFieldValue(`params.${index}`, value?.toString());
+			} else {
+				form.setFieldValue(`params.${index}`, null);
+			}
 		}
 
 		console.log("Form values:", form.values);
@@ -88,13 +99,16 @@ const SoftStakingFunctionInput = ({
 													form.values.params[index],
 												)}
 												minRows={4}
+												ref={(el) =>
+													(inputRefs.current[index] =
+														el)
+												}
 											/>
 										);
 									}
 									return (
 										<TextInput
 											name={`params.${index}`}
-											// name={`params.${input.name}`}
 											key={index}
 											label={input.name}
 											size="sm"
@@ -102,13 +116,16 @@ const SoftStakingFunctionInput = ({
 											value={
 												form.getInputProps(
 													`params.${index}`,
-												).value
+												).value || ""
 											}
 											onChange={(event) =>
 												handleInputValueChange(
 													index,
 													event.currentTarget.value,
 												)
+											}
+											ref={(el) =>
+												(inputRefs.current[index] = el)
 											}
 										/>
 									);

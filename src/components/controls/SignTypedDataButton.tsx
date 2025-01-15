@@ -22,6 +22,7 @@ const SignTypedDataButton = ({ label }: SignTypedDataButtonProps) => {
 	return (
 		<Button
 			name="sign-typed-data"
+            disabled={!typedData}
 			onClick={() => {
 				if (typedData) {
 					signTypedDataAsync(typedData);

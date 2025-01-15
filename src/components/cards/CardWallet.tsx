@@ -17,12 +17,15 @@ import {
 } from "@reown/appkit/react";
 import { IconCheck, IconCopy, IconWallet } from "@tabler/icons-react";
 import TokenBalance from "../controls/TokenBalance";
+import { useConnectedChain } from "../../hooks/useConnectedChain"; 
 
 function CardWallet() {
 	const { open } = useAppKit();
 	const { address, status } = useAppKitAccount();
 	const formattedAddress = address as `0x${string}`;
 	const { disconnect } = useDisconnect();
+
+	useConnectedChain();
 
 	console.log({ status });
 	console.log({ address });
@@ -82,8 +85,8 @@ function CardWallet() {
 					</Stack>
 				)}
 				{status === "connected" && (
-					<Stack>
-						<Group spacing="xs" align="flex-start">
+					<Stack spacing="xs">
+						<Group align="flex-start">
 							<Text>
 								Address:{" "}
 								<Text span size="sm" fw="bold" color="gray.8">

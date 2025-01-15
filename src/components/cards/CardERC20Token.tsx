@@ -10,15 +10,17 @@ import {
 import { useAppKitAccount } from "@reown/appkit/react";
 
 import { IconExternalLink } from "@tabler/icons-react";
-import { useConnectedChain } from "../../hooks/useConnectedChain";
+// import { useConnectedChain } from "../../hooks/useConnectedChain";
+import Constants from "../../common/constants";
+import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
 import TokenBalance from "../controls/TokenBalance";
 
-const token = import.meta.env.VITE_WUSD_TOKEN_ADDRESS!;
+const token = Constants.WUSD_TOKEN_ADDRESS!;
 
 function CardERC20Token() {
 	const { address, status } = useAppKitAccount();
 	const formattedAddress = address as `0x${string}`;
-	const connectedChain = useConnectedChain();
+	const { connectedChain } = useChainConnectionStore();
 
 	return (
 		<Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -36,8 +38,8 @@ function CardERC20Token() {
 						</Title>
 					</Stack>
 				</Group>
-				<Stack>
-					<Group spacing="xs" align="flex-start">
+				<Stack spacing="xs">
+					<Group align="flex-start">
 						<Text>
 							Address:{" "}
 							<Text span size="sm" fw="bold" color="gray.8">
@@ -55,10 +57,12 @@ function CardERC20Token() {
 						</ActionIcon>
 					</Group>
 					{status === "connected" && (
-						<TokenBalance
-							address={formattedAddress}
-							token={token}
-						/>
+						<Group grow>
+							<TokenBalance
+								address={formattedAddress}
+								token={token}
+							/>
+						</Group>
 					)}
 				</Stack>
 			</Stack>

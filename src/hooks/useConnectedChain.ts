@@ -1,24 +1,26 @@
-import { useEffect, useState } from "react";
-import { Config } from "@wagmi/core";
+import { useEffect } from "react";
 import { useChainId, useChains } from "wagmi";
+import { useChainConnectionStore } from "./stores/useChainConnectionStore";
 
 export function useConnectedChain() {
-    const chainId = useChainId();
-    const chains = useChains();
-    const [connectedChain, setConnectedChain] = useState<
-        Config["chains"][number] | null
-    >(null);
+	const chainId = useChainId();
+	const chains = useChains();
+	// const [connectedChain, setConnectedChain] = useState<
+	//     Config["chains"][number] | null
+	// >(null);
 
-    useEffect(() => {
-        if (chains && chainId) {
-            const matchedChain = chains.find((chain) => chain.id === chainId);
-            if (matchedChain) {
-                setConnectedChain(matchedChain);
-            }
-        }
-    }, [chains, chainId]);
+	const { connectedChain, setConnectedChain } = useChainConnectionStore();
 
-    console.log("Connected chain: ", connectedChain);
+	useEffect(() => {
+		if (chains && chainId) {
+			const matchedChain = chains.find((chain) => chain.id === chainId);
+			if (matchedChain) {
+				setConnectedChain(matchedChain);
+			}
+		}
+	}, [chains, chainId, setConnectedChain]);
 
-    return connectedChain;
+	console.log("Connected chain: ", connectedChain);
+
+	return connectedChain;
 }

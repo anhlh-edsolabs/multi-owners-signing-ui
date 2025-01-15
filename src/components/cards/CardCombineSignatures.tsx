@@ -63,7 +63,7 @@ const CardCombineSignatures = () => {
 						align="flex-end"
 					>
 						<Grid.Col span={10}>
-							<TextInput
+							<TextInput readOnly
 								value={
 									form.getInputProps(`signature${index}`)
 										.value

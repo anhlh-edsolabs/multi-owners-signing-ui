@@ -9,10 +9,6 @@ import "./index.css";
 import { WagmiProvider } from "wagmi";
 import { config } from "./common/config";
 
-console.log(
-	"WALLET_CONNECT_PROJECT_ID",
-	import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
-);
 const queryClient = new QueryClient();
 
 createAppKit(config);
@@ -20,7 +16,11 @@ createAppKit(config);
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<WagmiProvider config={config.adapters[0].wagmiConfig}>
 		<QueryClientProvider client={queryClient}>
-			<MantineProvider withGlobalStyles withNormalizeCSS>
+			<MantineProvider
+				withGlobalStyles
+				withNormalizeCSS
+				theme={{ loader: "dots" }}
+			>
 				<App />
 			</MantineProvider>
 		</QueryClientProvider>

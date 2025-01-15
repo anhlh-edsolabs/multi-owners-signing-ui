@@ -7,6 +7,8 @@ export type ContractInfoProps = {
 
 export type ContractFunctionProps = {
 	abi: any[];
+	address: `0x${string}`;
+	functionWithNonces?: string[];
 };
 
 export type ReadContractProps = {

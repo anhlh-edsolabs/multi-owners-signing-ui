@@ -7,23 +7,7 @@ interface TypedDataStore {
 }
 
 const useTypedDataStore = create<TypedDataStore>((set) => ({
-	typedData: {
-		domain: {
-			name: "",
-			version: "",
-			chainId: 0,
-			verifyingContract: "0x",
-		},
-		types: {
-			FunctionCall: [],
-		},
-		primaryType: "",
-		message: {
-			nonce: 0,
-			selector: "",
-			inputData: "",
-		},
-	},
+	typedData: undefined,
 	setTypedData: (typedData) => set({ typedData }),
 }));
 
