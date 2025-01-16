@@ -18,6 +18,7 @@ import { SoftStakingFunctionProps } from "../../common/types/props";
 
 import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
+import ClaimDataFromAPI from "./ClaimDataFromAPI";
 
 const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
 	(item) =>
@@ -130,6 +131,9 @@ const SoftStakingFunctionInput = ({
 										/>
 									);
 								})}
+							{selectedFunction === SPECIAL_FUNCTION && (
+								<ClaimDataFromAPI />
+							)}
 							{MULTI_SIG_FUNCTIONS.includes(selectedFunction) ? (
 								<Group grow>
 									<GenerateTypedDataButton label="Create typed data for signing" />

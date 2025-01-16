@@ -8,21 +8,21 @@ import { useSignatureStore } from "../../hooks/stores/useSignatureStore";
 import { SignTypedDataButtonProps } from "../../common/types/props";
 
 const SignTypedDataButton = ({ label }: SignTypedDataButtonProps) => {
-	const { signTypedDataAsync, data: signatureData } = useSignTypedData();
+	const { signTypedDataAsync, data: signature } = useSignTypedData();
 	const { setSignature } = useSignatureStore();
 	const { typedData } = useTypedDataStore();
 
 	useEffect(() => {
-		if (signatureData) {
-			console.log("Signature: ", signatureData);
-			setSignature(signatureData);
+		if (signature) {
+			console.log({ signature });
+			setSignature(signature);
 		}
-	}, [setSignature, signatureData]);
+	}, [setSignature, signature]);
 
 	return (
 		<Button
 			name="sign-typed-data"
-            disabled={!typedData}
+			disabled={!typedData}
 			onClick={() => {
 				if (typedData) {
 					signTypedDataAsync(typedData);

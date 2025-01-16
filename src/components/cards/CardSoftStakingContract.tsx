@@ -1,7 +1,6 @@
 import { Card, Stack } from "@mantine/core";
 
 import Constants from "../../common/constants";
-import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 
 import {
 	FunctionCallFormProvider,
@@ -9,8 +8,6 @@ import {
 } from "../../hooks/useFunctionCallForm";
 
 import ContractInfo from "../controls/ContractInfo";
-// import ReadContract from "../controls/ReadContract";
-import ClaimDataFromAPI from "../controls/ClaimDataFromAPI";
 import SoftStakingFunctionSelection from "../controls/SoftStakingFunctionSelection";
 import SoftStakingFunctionInput from "../controls/SoftStakingFunctionInput";
 import TypedDataView from "../controls/TypedDataView";
@@ -26,8 +23,6 @@ const MULTI_SIG_FUNCTIONS = [
 ];
 
 const CardSoftStakingContract = () => {
-	const { selectedFunction } = useFunctionSelectionStore();
-
 	const form = useFunctionCallForm({
 		initialValues: {
 			functionName: "",
@@ -39,16 +34,6 @@ const CardSoftStakingContract = () => {
 	console.log("Form initial values: ", form.values);
 
 	return (
-		// <ReadContract
-		// 	funcName={"getNonce"}
-		// 	args={[
-		// 		getFunction(
-		// 			form.values.functionName,
-		// 			Constants.SOFTSTAKING_CONTRACT_ABI,
-		// 		).selector,
-		// 	]}
-		// 	onListening={setNonce}
-		// >
 		<Card
 			shadow="sm"
 			padding="lg"
@@ -76,10 +61,8 @@ const CardSoftStakingContract = () => {
 					special={SPECIAL_FUNCTION}
 				/>
 				<TypedDataView />
-				{selectedFunction === SPECIAL_FUNCTION && <ClaimDataFromAPI />}
 			</FunctionCallFormProvider>
 		</Card>
-		// </ReadContract>
 	);
 };
 

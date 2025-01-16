@@ -1,6 +1,7 @@
-import { Space, Stack, Title } from "@mantine/core";
-import { Prism } from "@mantine/prism";
+import { Stack } from "@mantine/core";
 import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
+
+import TypedDataViewItem from "./TypedDataViewItem";
 
 const CombinedSignature = () => {
 	const { combinedSignature } = useExecutionStore();
@@ -8,9 +9,11 @@ const CombinedSignature = () => {
 	return (
 		combinedSignature && (
 			<Stack spacing="lg">
-				<Space h="md" />
-				<Title order={3}>Combined Signature</Title>
-				<Prism language="bash">{combinedSignature || "0x"}</Prism>
+				<TypedDataViewItem
+					title="Combined Signature"
+					language="bash"
+					content={combinedSignature || "0x"}
+				/>
 			</Stack>
 		)
 	);
