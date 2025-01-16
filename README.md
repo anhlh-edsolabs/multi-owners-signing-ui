@@ -126,11 +126,14 @@ This will start the Vite development server and open the application in your def
 The following environment variables are required:
 
 `VITE_WALLET_CONNECT_PROJECT_ID`: Your WalletConnect project ID
+
 `VITE_WUSD_TOKEN_ADDRESS`: The address of the WUSD token
+
 `VITE_SOFTSTAKING_ADDRESS`: The address of the soft staking contract
+
 `VITE_SOFTSTAKING_DATA_ENDPOINT`: The API endpoint for querying Soft Staking data from the indexer
-  > DEV: <https://backend-dev.swapflow.io/v1/monthly-reward>
-  > STG: <https://backend-stg.swapflow.io/v1/monthly-reward>
+> DEV: <https://backend-dev.swapflow.io/v1/monthly-reward>
+> STG: <https://backend-stg.swapflow.io/v1/monthly-reward>
 
 ## Scripts
 
