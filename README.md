@@ -132,7 +132,9 @@ The following environment variables are required:
 `VITE_SOFTSTAKING_ADDRESS`: The address of the soft staking contract
 
 `VITE_SOFTSTAKING_DATA_ENDPOINT`: The API endpoint for querying Soft Staking data from the indexer
+
 > DEV: <https://backend-dev.swapflow.io/v1/monthly-reward>
+
 > STG: <https://backend-stg.swapflow.io/v1/monthly-reward>
 
 ## Scripts
