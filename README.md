@@ -1,6 +1,17 @@
 # Multi-Owners Contract Signing Tool
 
-This project is a web-based application for managing and signing multi-owner contracts using blockchain technology. It leverages various libraries and frameworks to provide a seamless user experience for interacting with smart contracts.
+~~This project is a web-based application for managing and signing multi-owner contracts using blockchain technology. It leverages various libraries and frameworks to provide a seamless user experience for interacting with smart contracts.~~
+
+Nah, it's just me trying to learn web dev using ReactJS. The milestones achieved in this project are:
+
+- Component design & refinement.
+- State & Store management. By saying `Store` I mean the App's local memory, not just some grocery store you're thinking of.
+- Writing and using Hooks.
+- Form management.
+- Getting data from an API.
+- Connect wallet and sign structured data.
+- Query smart contract data & execute transactions.
+- Deploy to a domain.
 
 ## Table of Contents
 
