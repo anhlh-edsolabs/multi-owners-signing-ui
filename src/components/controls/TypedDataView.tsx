@@ -9,58 +9,61 @@ import { useSignatureStore } from "../../hooks/stores/useSignatureStore";
 
 const TypedDataView = () => {
 	const { typedData } = useTypedDataStore();
-	const { selectedFunction } = useFunctionSelectionStore();
+	const { selectedFunction, selectedFunctionType } =
+		useFunctionSelectionStore();
 	const { signature } = useSignatureStore();
 
 	return (
 		<>
-			{selectedFunction && typedData && (
-				<Stack spacing="lg">
+			{selectedFunction &&
+				selectedFunctionType == "write" &&
+				typedData && (
 					<Stack spacing="lg">
-						<TypedDataViewItem
-							title="Typed Data"
-							language="json"
-							content={JSON.stringify(typedData, null, 2)}
-						/>
-						<TypedDataViewItem
-							title="Function selector"
-							language="bash"
-							content={typedData.message.selector}
-						/>
-						<TypedDataViewItem
-							title="Input data"
-							language="json"
-							content={typedData.message.inputData}
-						/>
-						<TypedDataViewItem
-							title="Typed data struct hash"
-							language="json"
-							content={ethers.TypedDataEncoder.hashStruct(
-								typedData.primaryType,
-								typedData.types,
-								typedData.message,
-							)}
-						/>
-						<TypedDataViewItem
-							title="Digest hash (for on-chain verification)"
-							language="json"
-							content={ethers.TypedDataEncoder.hash(
-								typedData.domain,
-								typedData.types,
-								typedData.message,
-							)}
-						/>
+						<Stack spacing="lg">
+							<TypedDataViewItem
+								title="Typed Data"
+								language="json"
+								content={JSON.stringify(typedData, null, 2)}
+							/>
+							<TypedDataViewItem
+								title="Function selector"
+								language="bash"
+								content={typedData.message.selector}
+							/>
+							<TypedDataViewItem
+								title="Input data"
+								language="json"
+								content={typedData.message.inputData}
+							/>
+							<TypedDataViewItem
+								title="Typed data struct hash"
+								language="json"
+								content={ethers.TypedDataEncoder.hashStruct(
+									typedData.primaryType,
+									typedData.types,
+									typedData.message,
+								)}
+							/>
+							<TypedDataViewItem
+								title="Digest hash (for on-chain verification)"
+								language="json"
+								content={ethers.TypedDataEncoder.hash(
+									typedData.domain,
+									typedData.types,
+									typedData.message,
+								)}
+							/>
+						</Stack>
+						{signature && (
+							<TypedDataViewItem
+								title="Signature"
+								language="json"
+								content={signature}
+							/>
+						)}
+						<CombinedSignature />
 					</Stack>
-					{signature && (
-						<TypedDataViewItem
-							title="Signature"
-							language="json"
-							content={signature}
-						/>
-					)}
-					<CombinedSignature />
-				</Stack>
-			)}
+				)}
 		</>
 	);
 };

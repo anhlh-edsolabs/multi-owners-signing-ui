@@ -19,13 +19,7 @@ import { SoftStakingFunctionProps } from "../../common/types/props";
 import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
 import ClaimDataFromAPI from "./ClaimDataFromAPI";
-
-const WriteFunctions = Constants.SOFTSTAKING_CONTRACT_ABI.filter(
-	(item) =>
-		item.type === "function" &&
-		item.stateMutability !== "view" &&
-		item.stateMutability !== "pure",
-);
+import ReadContract from "./ReadContract";
 
 const SoftStakingFunctionInput = ({
 	multiSigs,
@@ -35,7 +29,8 @@ const SoftStakingFunctionInput = ({
 		MULTI_SIG_FUNCTIONS = multiSigs;
 	const form = useFunctionCallFormContext();
 
-	const { selectedFunction } = useFunctionSelectionStore();
+	const { selectedFunction, selectedFunctionABI, selectedFunctionType } =
+		useFunctionSelectionStore();
 
 	const inputRefs = useRef<(HTMLInputElement | HTMLTextAreaElement | null)[]>(
 		[],
@@ -74,63 +69,68 @@ const SoftStakingFunctionInput = ({
 					<form>
 						<Stack spacing="xs">
 							{selectedFunction !== SPECIAL_FUNCTION &&
-								WriteFunctions.find(
-									(func) => func.name === selectedFunction,
-								)?.inputs.map((input, index) => {
-									if (
-										input.type.startsWith("tuple") ||
-										input.type.endsWith("[]")
-									) {
+								selectedFunctionABI?.inputs.map(
+									(input, index) => {
+										if (
+											input.type.startsWith("tuple") ||
+											input.type.endsWith("[]")
+										) {
+											return (
+												<JsonInput
+													name="input-tuple"
+													key={index}
+													label={input.name}
+													placeholder="Input tuple as arrays"
+													withAsterisk
+													validationError="Invalid JSON"
+													onBlur={(event) =>
+														handleInputValueChange(
+															index,
+															event.currentTarget
+																.value,
+														)
+													}
+													value={JSON.stringify(
+														form.values.params[
+															index
+														],
+													)}
+													minRows={4}
+													ref={(el) =>
+														(inputRefs.current[
+															index
+														] = el)
+													}
+												/>
+											);
+										}
 										return (
-											<JsonInput
-												name="input-tuple"
+											<TextInput
+												name={`params.${index}`}
 												key={index}
 												label={input.name}
-												placeholder="Input tuple as arrays"
+												size="sm"
 												withAsterisk
-												validationError="Invalid JSON"
-												onBlur={(event) =>
+												value={
+													form.getInputProps(
+														`params.${index}`,
+													).value || ""
+												}
+												onChange={(event) =>
 													handleInputValueChange(
 														index,
 														event.currentTarget
 															.value,
 													)
 												}
-												value={JSON.stringify(
-													form.values.params[index],
-												)}
-												minRows={4}
 												ref={(el) =>
 													(inputRefs.current[index] =
 														el)
 												}
 											/>
 										);
-									}
-									return (
-										<TextInput
-											name={`params.${index}`}
-											key={index}
-											label={input.name}
-											size="sm"
-											withAsterisk
-											value={
-												form.getInputProps(
-													`params.${index}`,
-												).value || ""
-											}
-											onChange={(event) =>
-												handleInputValueChange(
-													index,
-													event.currentTarget.value,
-												)
-											}
-											ref={(el) =>
-												(inputRefs.current[index] = el)
-											}
-										/>
-									);
-								})}
+									},
+								)}
 							{selectedFunction === SPECIAL_FUNCTION && (
 								<ClaimDataFromAPI />
 							)}
@@ -140,10 +140,32 @@ const SoftStakingFunctionInput = ({
 									<SignTypedDataButton label="Sign typed data" />
 								</Group>
 							) : (
-								<WriteContract
-									funcName={selectedFunction}
-									args={form.values.params}
-								/>
+								<>
+									{selectedFunctionType == "write" && (
+										<WriteContract
+											abi={
+												Constants.SOFTSTAKING_CONTRACT_ABI
+											}
+											address={
+												Constants.SOFTSTAKING_ADDRESS
+											}
+											funcName={selectedFunction}
+											args={form.values.params}
+										/>
+									)}
+									{selectedFunctionType == "read" && (
+										<ReadContract
+											abi={
+												Constants.SOFTSTAKING_CONTRACT_ABI
+											}
+											address={
+												Constants.SOFTSTAKING_ADDRESS
+											}
+											funcName={selectedFunction}
+											args={form.values.params}
+										/>
+									)}
+								</>
 							)}
 						</Stack>
 					</form>

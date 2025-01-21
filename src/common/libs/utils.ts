@@ -28,10 +28,7 @@ export const iterateFunctionInputs = (
 	return result;
 };
 
-export const getFunction = (
-	functionName: string,
-	contractABI: any[],
-) => {
+export const getFunction = (functionName: string, contractABI: any[]) => {
 	const functionAbi = contractABI.find(
 		(item) => item.type === "function" && item.name === functionName,
 	);
@@ -40,13 +37,21 @@ export const getFunction = (
 		return {
 			functionAbi: null,
 			selector: "",
-		}
+		};
 	}
 
 	const selector = FunctionFragment.from(functionAbi).selector;
 
 	return {
 		functionAbi,
-		selector
-	}
+		selector,
+	};
+};
+
+export const toObject = (data: any) => {
+	return JSON.parse(
+		JSON.stringify(data, (key, value) =>
+			typeof value === "bigint" ? value.toString() : value,
+		),
+	);
 };

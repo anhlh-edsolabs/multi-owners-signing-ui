@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Group, Select } from "@mantine/core";
+import { Group, Radio, Select } from "@mantine/core";
 import { useReadContract } from "wagmi";
 import { getFunction } from "../../common/libs/utils";
 import { AbiItem, ContractFunctionProps } from "../../common/types";
@@ -18,11 +18,34 @@ const SoftStakingFunctionSelection = ({
 			item.stateMutability !== "pure",
 	);
 
-	const { setSelectedFunction } =
-		useFunctionSelectionStore();
+	const ReadFunction = abi.filter(
+		(item: AbiItem) =>
+			item.type === "function" &&
+			(item.stateMutability === "view" ||
+				item.stateMutability === "pure"),
+	);
+
+	const { setSelectedFunction } = useFunctionSelectionStore();
 
 	const form = useFunctionCallFormContext();
 	const [selector, setSelector] = useState<string>("");
+
+	const [functionType, setFunctionType] = useState<string>("read");
+	const [functionList, setFunctionList] = useState<AbiItem[]>(ReadFunction);
+	const [selectValue, setSelectValue] = useState<string>("");
+
+	const handleFunctionTypeSelect = (value: string) => {
+		setFunctionType(value);
+
+		if (value === "read") {
+			setFunctionList(ReadFunction);
+		} else {
+			setFunctionList(WriteFunctions);
+		}
+
+		setSelectValue("");
+		setSelectedFunction("", "", null);
+	};
 
 	const { data, isSuccess } = useReadContract({
 		abi,
@@ -37,14 +60,16 @@ const SoftStakingFunctionSelection = ({
 		if (isSuccess) {
 			form.setFieldValue("nonce", nonce);
 		}
-		// console.log(`Function ${selectedFunction} Nonce: ${nonce}`);
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isSuccess, nonce]);
 
 	const handleFunctionSelect = async (funcName: string) => {
 		if (!funcName) return;
 
-		setSelectedFunction(funcName);
+		const functionABI = functionList.find((func) => func.name === funcName);
+		setSelectedFunction(funcName, functionType, functionABI);
+		setSelectValue(funcName);
 
 		try {
 			const functionDetails = getFunction(funcName, abi);
@@ -65,21 +90,37 @@ const SoftStakingFunctionSelection = ({
 	};
 
 	return (
-		<Group grow>
-			<Select
-				name="function-select"
-				dropdownPosition="bottom"
-				label="Select Function"
-				placeholder="Pick one"
-				data={WriteFunctions.map((func: AbiItem) => ({
-					value: func.name || "",
-					label: `${func.name} (${
-						getFunction(func.name || "", abi).selector
-					})`,
-				}))}
-				onChange={handleFunctionSelect}
-			/>
-		</Group>
+		<>
+			<Group>
+				<Radio.Group
+					name="function-type"
+					color="blue"
+					value={functionType}
+					onChange={handleFunctionTypeSelect}
+				>
+					<Group mt="xs">
+						<Radio value="read" label="Read contract" />
+						<Radio value="write" label="Write contract" />
+					</Group>
+				</Radio.Group>
+			</Group>
+			<Group grow>
+				<Select
+					name="function-select"
+					dropdownPosition="bottom"
+					label="Select Function"
+					placeholder="Pick one"
+					value={selectValue}
+					data={functionList.map((func: AbiItem) => ({
+						value: func.name || "",
+						label: `${func.name} (${
+							getFunction(func.name || "", abi).selector
+						})`,
+					}))}
+					onChange={handleFunctionSelect}
+				/>
+			</Group>
+		</>
 	);
 };
 

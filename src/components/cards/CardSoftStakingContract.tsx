@@ -31,7 +31,7 @@ const CardSoftStakingContract = () => {
 		},
 	});
 
-	console.log("Form initial values: ", form.values);
+	console.log("Form values: ", form.values);
 
 	return (
 		<Card

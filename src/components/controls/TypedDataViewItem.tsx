@@ -6,14 +6,14 @@ const TypedDataViewItem = ({
 	title,
 	language,
 	content,
-	withLineNumbers,
+	withLineNumbers = true,
 }: {
 	title: string;
 	language: Language;
 	content: string;
 	withLineNumbers?: boolean;
 }) => {
-	withLineNumbers = withLineNumbers || true;
+	// withLineNumbers = withLineNumbers || true;
 	return (
 		<>
 			<Space h="md" />

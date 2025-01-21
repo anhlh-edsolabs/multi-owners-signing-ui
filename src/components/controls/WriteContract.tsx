@@ -12,7 +12,7 @@ import {
 import { simulateContract, SimulateContractErrorType } from "@wagmi/core";
 
 import { wagmiConfig as config } from "../../common/config";
-import Constants from "../../common/constants";
+
 import { WriteContractProps } from "../../common/types/index";
 
 import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
@@ -22,7 +22,12 @@ import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
 
 const EXECUTE_FUNCTION = "execute";
 
-const WriteContract = ({ funcName, args }: WriteContractProps) => {
+const WriteContract = ({
+	abi,
+	address,
+	funcName,
+	args,
+}: WriteContractProps) => {
 	const { connectedChain } = useChainConnectionStore();
 
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -38,8 +43,6 @@ const WriteContract = ({ funcName, args }: WriteContractProps) => {
 	const { selector, calldata, combinedSignature } = useExecutionStore();
 	const form = useFunctionCallFormContext();
 
-	console.log("Config from WriteContract:", config.state);
-
 	const handlePopulateExecutionData = () => {
 		form.setFieldValue("params.0", selector);
 		form.setFieldValue("params.1", calldata);
@@ -53,24 +56,21 @@ const WriteContract = ({ funcName, args }: WriteContractProps) => {
 			console.log("Function Name:", funcName);
 			console.log("Arguments:", args);
 
-			// simulate contract call
-			const simulation = await simulateContract(config, {
-				abi: Constants.SOFTSTAKING_CONTRACT_ABI,
-				address: Constants.SOFTSTAKING_ADDRESS,
+			const contractCallArgs = {
+				abi,
+				address,
 				functionName: funcName,
 				args,
-			});
+			};
+
+			// simulate contract call
+			const simulation = await simulateContract(config, contractCallArgs);
 
 			console.log("Simulation result:", simulation);
 
 			// execute contract call
 			console.log("Submitting transaction...");
-			writeContract({
-				abi: Constants.SOFTSTAKING_CONTRACT_ABI,
-				address: Constants.SOFTSTAKING_ADDRESS,
-				functionName: funcName,
-				args: args,
-			});
+			writeContract(contractCallArgs);
 		} catch (err: any) {
 			console.log("Error:", err);
 			setErrorMessage((err as SimulateContractErrorType).message);
