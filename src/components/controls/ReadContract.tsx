@@ -43,8 +43,6 @@ const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
 		}
 	}, [chainConfig, connectedChain]);
 
-	// const config = chainConfig;
-
 	const paramsRequired =
 		selectedFunctionABI?.inputs && selectedFunctionABI?.inputs.length > 0;
 
@@ -83,56 +81,7 @@ const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
 		}
 	}, [paramsRequired, funcName, args, fetchData]);
 
-	// const { data, isSuccess, error, isPending } = useReadContract({
-	// 	abi,
-	// 	address,
-	// 	functionName: funcName,
-	// 	args: args,
-	// });
-
-	// setParsedData("");
-
-	// useEffect(() => {
-	// 	if (isSuccess) {
-	// 		const parsedData = toObject(data);
-	// 		setParsedData(JSON.stringify(parsedData, null, 2));
-	// 	}
-	// }, [isSuccess, data]);
-
-	// const handleReadContract = useCallback(
-	// 	async (funcName: string, args: any[]) => {
-	// 		setLoading(true);
-	// 		try {
-	// 			const data = await readContract(config as Config, {
-	// 				abi,
-	// 				address,
-	// 				functionName: funcName,
-	// 				args,
-	// 			});
-	// 			console.log("Data", data);
-
-	// 			const parseData = toObject(data);
-	// 			setParsedData(JSON.stringify(parseData, null, 2));
-	// 		} catch (err: unknown) {
-	// 			const error = err as ReadContractErrorType;
-	// 			console.error(error);
-	// 			setError(error);
-	// 		}
-	// 		setLoading(false);
-	// 	},
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// 	[funcName, args],
-	// );
-
-	// useEffect(() => {
-	// 	if (paramsRequired) {
-	// 		console.log("Params required", paramsRequired);
-	// 		handleReadContract(funcName, args || []);
-	// 	}
-	// }, [paramsRequired, funcName, args, handleReadContract]);
-
 	if (paramsRequired) {
-		// setParsedData("");
 		return (
 			<Stack>
 				<Group>

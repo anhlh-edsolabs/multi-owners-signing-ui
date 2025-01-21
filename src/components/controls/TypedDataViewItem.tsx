@@ -13,7 +13,6 @@ const TypedDataViewItem = ({
 	content: string;
 	withLineNumbers?: boolean;
 }) => {
-	// withLineNumbers = withLineNumbers || true;
 	return (
 		<>
 			<Space h="md" />

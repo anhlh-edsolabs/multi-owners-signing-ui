@@ -12,13 +12,6 @@ export type ContractFunctionProps = {
 	functionWithNonces?: string[];
 };
 
-// export type ReadContractProps = {
-// 	funcName: string;
-// 	children?: React.ReactNode;
-// 	args?: any;
-// 	onListening?: (data: any) => void;
-// };
-
 export type WriteContractProps = {
 	abi: any[];
 	address: `0x${string}`;
