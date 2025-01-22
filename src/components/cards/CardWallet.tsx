@@ -17,7 +17,6 @@ import {
 } from "@reown/appkit/react";
 import { IconCheck, IconCopy, IconWallet } from "@tabler/icons-react";
 import TokenBalance from "../controls/TokenBalance";
-import { useConnectedChain } from "../../hooks/useConnectedChain"; 
 
 function CardWallet() {
 	const { open } = useAppKit();
@@ -25,10 +24,8 @@ function CardWallet() {
 	const formattedAddress = address as `0x${string}`;
 	const { disconnect } = useDisconnect();
 
-	useConnectedChain();
-
-	console.log({ status });
-	console.log({ address });
+	console.log("Connection status:", status);
+	console.log("Connected wallet:", address);
 
 	return (
 		<Card shadow="sm" padding="lg" radius="md" withBorder>
