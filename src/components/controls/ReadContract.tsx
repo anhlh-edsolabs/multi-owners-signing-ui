@@ -1,60 +1,40 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 
-import {
-	Config,
-	createConfig,
-	http,
-	readContract,
-	type ReadContractErrorType,
-} from "@wagmi/core";
-import { Chain } from "@wagmi/core/chains";
+import { readContract, type ReadContractErrorType } from "@wagmi/core";
+// import { Chain } from "@wagmi/core/chains";
 import { type BaseError } from "wagmi";
 
 import { Alert, Button, Group, Loader, Stack } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 
+import { wagmiConfig } from "../../common/config";
 import { toObject } from "../../common/libs/utils";
 import { ReadContractProps } from "../../common/types";
 
 import TypedDataViewItem from "./TypedDataViewItem";
 
-import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
+// import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
 import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 
 const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
-	const { connectedChain } = useChainConnectionStore();
 	const { selectedFunctionABI } = useFunctionSelectionStore();
-	const [chainConfig, setChainConfig] = useState<Config | null>(null);
 	const [parseData, setParsedData] = useState<string>("");
 	const [isLoading, setLoading] = useState(false);
 	const [error, setError] = useState<ReadContractErrorType | null>(null);
-
-	useEffect(() => {
-		const networks = connectedChain ? [connectedChain] : [];
-		if (!chainConfig) {
-			const newConfig = createConfig({
-				chains: networks as unknown as readonly [Chain, ...Chain[]],
-				transports: {
-					[networks[0].id]: http(),
-				},
-			});
-			setChainConfig(newConfig);
-		}
-	}, [chainConfig, connectedChain]);
 
 	const paramsRequired =
 		selectedFunctionABI?.inputs && selectedFunctionABI?.inputs.length > 0;
 
 	const fetchData = useCallback(
 		async (funcName: string, args: any[]) => {
-			if (!chainConfig) return;
+			if (!wagmiConfig) return;
 
 			setLoading(true);
 			setError(null);
 
 			try {
-				const result = await readContract(chainConfig, {
+				const result = await readContract(wagmiConfig, {
 					abi,
 					address,
 					functionName: funcName,
@@ -69,8 +49,7 @@ const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
 				setLoading(false);
 			}
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[chainConfig],
+		[abi, address],
 	);
 
 	useEffect(() => {
