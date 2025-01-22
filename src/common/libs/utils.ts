@@ -50,7 +50,7 @@ export const getFunction = (functionName: string, contractABI: any[]) => {
 
 export const toObject = (data: any) => {
 	return JSON.parse(
-		JSON.stringify(data, (key, value) =>
+		JSON.stringify(data, (_, value) =>
 			typeof value === "bigint" ? value.toString() : value,
 		),
 	);
