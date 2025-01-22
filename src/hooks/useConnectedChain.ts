@@ -5,9 +5,6 @@ import { useChainConnectionStore } from "./stores/useChainConnectionStore";
 export function useConnectedChain() {
 	const chainId = useChainId();
 	const chains = useChains();
-	// const [connectedChain, setConnectedChain] = useState<
-	//     Config["chains"][number] | null
-	// >(null);
 
 	const { connectedChain, setConnectedChain } = useChainConnectionStore();
 
@@ -19,8 +16,6 @@ export function useConnectedChain() {
 			}
 		}
 	}, [chains, chainId, setConnectedChain]);
-
-	console.log("Connected chain: ", connectedChain);
 
 	return connectedChain;
 }
