@@ -1,8 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+
 import { Group, Radio, Select } from "@mantine/core";
-import { useReadContract } from "wagmi";
-import { getFunction } from "../../common/libs/utils";
+import { readContract, type ReadContractErrorType } from "@wagmi/core";
+import { type BaseError } from "wagmi";
+
+import { wagmiConfig } from "../../common/config";
+import { getFunction, toObject } from "../../common/libs/utils";
 import { AbiItem, ContractFunctionProps } from "../../common/types";
+
+import ErrorAlert from "./ErrorAlert";
+
 import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
 
@@ -11,58 +18,64 @@ const SoftStakingFunctionSelection = ({
 	address,
 	functionWithNonces,
 }: ContractFunctionProps) => {
-	const WriteFunctions = abi.filter(
-		(item: AbiItem) =>
-			item.type === "function" &&
-			item.stateMutability !== "view" &&
-			item.stateMutability !== "pure",
-	);
-
-	const ReadFunction = abi.filter(
-		(item: AbiItem) =>
-			item.type === "function" &&
-			(item.stateMutability === "view" ||
-				item.stateMutability === "pure"),
-	);
-
 	const { setSelectedFunction } = useFunctionSelectionStore();
-
 	const form = useFunctionCallFormContext();
-	const [selector, setSelector] = useState<string>("");
 
 	const [functionType, setFunctionType] = useState<string>("read");
-	const [functionList, setFunctionList] = useState<AbiItem[]>(ReadFunction);
+	// const [functionList, setFunctionList] = useState<AbiItem[]>(ReadFunction);
 	const [selectValue, setSelectValue] = useState<string>("");
+	const [error, setError] = useState<ReadContractErrorType | null>(null);
+
+	const filteredFunctions = useMemo(() => {
+		const writeFunctions = abi.filter(
+			(item: AbiItem) =>
+				item.type === "function" &&
+				item.stateMutability !== "view" &&
+				item.stateMutability !== "pure",
+		);
+
+		const readFunction = abi.filter(
+			(item: AbiItem) =>
+				item.type === "function" &&
+				(item.stateMutability === "view" ||
+					item.stateMutability === "pure"),
+		);
+
+		return { writeFunctions, readFunction };
+	}, [abi]);
+
+	const functionList =
+		functionType === "read"
+			? filteredFunctions.readFunction
+			: filteredFunctions.writeFunctions;
 
 	const handleFunctionTypeSelect = (value: string) => {
 		setFunctionType(value);
-
-		if (value === "read") {
-			setFunctionList(ReadFunction);
-		} else {
-			setFunctionList(WriteFunctions);
-		}
-
 		setSelectValue("");
 		setSelectedFunction("", "", null);
 	};
 
-	const { data, isSuccess } = useReadContract({
-		abi,
-		address,
-		functionName: selector != "" ? "getNonce" : "",
-		args: [selector],
-	});
+	const getNonceBySelector = useCallback(
+		async (selector: string): Promise<number | null> => {
+			if (selector === "") return null;
 
-	const nonce = data != undefined ? parseInt(data.toString()) : null;
+			try {
+				const result = await readContract(wagmiConfig, {
+					abi,
+					address,
+					functionName: "getNonce",
+					args: [selector],
+				});
 
-	useEffect(() => {
-		if (isSuccess) {
-			form.setFieldValue("nonce", nonce);
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isSuccess, nonce]);
+				const nonce = parseInt(toObject(result));
+				return nonce;
+			} catch (err) {
+				setError(err as ReadContractErrorType);
+				return null;
+			}
+		},
+		[abi, address],
+	);
 
 	const handleFunctionSelect = async (funcName: string) => {
 		if (!funcName) return;
@@ -76,11 +89,11 @@ const SoftStakingFunctionSelection = ({
 			form.setFieldValue("functionName", funcName);
 			form.setFieldValue("params", []);
 
-			if (functionWithNonces?.includes(funcName)) {
-				setSelector(functionDetails.selector);
-			} else {
-				form.setFieldValue("nonce", null);
-			}
+			const nonce = functionWithNonces?.includes(funcName)
+				? await getNonceBySelector(functionDetails.selector)
+				: null;
+
+			form.setFieldValue("nonce", nonce);
 		} catch (error) {
 			console.error(
 				`Error fetching nonce for function ${funcName}:`,
@@ -120,6 +133,14 @@ const SoftStakingFunctionSelection = ({
 					onChange={handleFunctionSelect}
 				/>
 			</Group>
+			{error && (
+				<ErrorAlert
+					message={
+						(error as unknown as BaseError).shortMessage ||
+						error.message
+					}
+				/>
+			)}
 		</>
 	);
 };
