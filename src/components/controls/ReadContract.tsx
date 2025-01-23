@@ -2,19 +2,18 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { readContract, type ReadContractErrorType } from "@wagmi/core";
-// import { Chain } from "@wagmi/core/chains";
 import { type BaseError } from "wagmi";
 
-import { Alert, Button, Group, Loader, Stack } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { Button, Group, Stack } from "@mantine/core";
 
 import { wagmiConfig } from "../../common/config";
 import { toObject } from "../../common/libs/utils";
 import { ReadContractProps } from "../../common/types";
 
-import TypedDataViewItem from "./TypedDataViewItem";
+import ErrorAlert from "./ErrorAlert";
+import CustomLoader from "./CustomLoader";
+import DataViewItem from "./TypedDataViewItem";
 
-// import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
 import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 
 const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
@@ -74,14 +73,10 @@ const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
 						Query function data
 					</Button>
 				</Group>
-				{isLoading && (
-					<Stack py="xs">
-						<Loader size="xs" />
-					</Stack>
-				)}
+				{isLoading && <CustomLoader />}
 				{parseData && (
 					<Stack spacing="xs">
-						<TypedDataViewItem
+						<DataViewItem
 							title="Result"
 							language="json"
 							withLineNumbers={false}
@@ -93,34 +88,24 @@ const ReadContract = ({ abi, address, funcName, args }: ReadContractProps) => {
 		);
 	} else {
 		if (isLoading) {
-			return (
-				<Stack py="xs">
-					<Loader size="xs" />
-				</Stack>
-			);
+			return <CustomLoader />;
 		}
 		if (error) {
 			return (
-				<Alert
-					icon={<IconAlertCircle size="1rem" />}
-					title="Error"
-					color="red"
-				>
-					{(error as unknown as BaseError).shortMessage ||
-						error.message}
-				</Alert>
+				<ErrorAlert
+					message={
+						(error as unknown as BaseError).shortMessage ||
+						error.message
+					}
+				/>
 			);
 		}
 		return (
 			<Group grow align="center">
-				{isLoading && (
-					<Stack py="xs">
-						<Loader size="xs" />
-					</Stack>
-				)}
+				{isLoading && <CustomLoader />}
 				{parseData && (
 					<Stack spacing="xs">
-						<TypedDataViewItem
+						<DataViewItem
 							title="Result"
 							language="json"
 							withLineNumbers={false}

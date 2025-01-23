@@ -1,8 +1,12 @@
-import { Alert, Loader, Stack, Text } from "@mantine/core";
-import { IconAlertCircle } from '@tabler/icons-react';
-import { formatUnits } from "ethers";
+import { Stack, Text } from "@mantine/core";
 import { type BaseError } from "wagmi";
+
+import { formatUnits } from "ethers";
+
 import { useTokenBalance } from "../../hooks/useTokenBalance";
+
+import ErrorAlert from "./ErrorAlert";
+import CustomLoader from "./CustomLoader";
 
 function TokenBalance({
 	address,
@@ -17,13 +21,13 @@ function TokenBalance({
 	});
 
 	if (isPending) {
-		return <Stack py="xs"><Loader size="xs" /></Stack>;
+		return <CustomLoader />;
 	}
 	if (error) {
 		return (
-			<Alert icon={<IconAlertCircle size="1rem" />} title="Error" color="red">
-				{(error as BaseError).shortMessage || error.message}
-			</Alert>
+			<ErrorAlert
+				message={(error as BaseError).shortMessage || error.message}
+			/>
 		);
 	}
 

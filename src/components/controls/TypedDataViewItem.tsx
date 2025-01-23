@@ -2,7 +2,7 @@ import { Title, Space } from "@mantine/core";
 import { Prism } from "@mantine/prism";
 import { Language } from "prism-react-renderer";
 
-const TypedDataViewItem = ({
+const DataViewItem = ({
 	title,
 	language,
 	content,
@@ -24,4 +24,4 @@ const TypedDataViewItem = ({
 	);
 };
 
-export default TypedDataViewItem;
+export default DataViewItem;
