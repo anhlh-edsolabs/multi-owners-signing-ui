@@ -1,7 +1,7 @@
 import { Stack } from "@mantine/core";
 import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
 
-import TypedDataViewItem from "./TypedDataViewItem";
+import DataViewItem from "./TypedDataViewItem";
 
 const CombinedSignature = () => {
 	const { combinedSignature } = useExecutionStore();
@@ -9,7 +9,7 @@ const CombinedSignature = () => {
 	return (
 		combinedSignature && (
 			<Stack spacing="lg">
-				<TypedDataViewItem
+				<DataViewItem
 					title="Combined Signature"
 					language="bash"
 					content={combinedSignature || "0x"}

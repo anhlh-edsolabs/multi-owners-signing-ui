@@ -3,7 +3,6 @@ import { FunctionCallFormData } from "../../common/types/form-data";
 import { GenerateTypedDataButtonProps } from "../../common/types/props";
 import { useExecutionStore } from "../../hooks/stores/useExecutionStore";
 import { useTypedDataStore } from "../../hooks/stores/useTypedDataStore";
-// import { useConnectedChain } from "../../hooks/useConnectedChain";
 import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
 import { useFunctionCallFormContext } from "../../hooks/useFunctionCallForm";
 

@@ -10,7 +10,7 @@ import {
 import { useAppKitAccount } from "@reown/appkit/react";
 
 import { IconExternalLink } from "@tabler/icons-react";
-// import { useConnectedChain } from "../../hooks/useConnectedChain";
+
 import Constants from "../../common/constants";
 import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
 import TokenBalance from "../controls/TokenBalance";

@@ -17,7 +17,6 @@ import {
 } from "@reown/appkit/react";
 import { IconCheck, IconCopy, IconWallet } from "@tabler/icons-react";
 import TokenBalance from "../controls/TokenBalance";
-import { useConnectedChain } from "../../hooks/useConnectedChain"; 
 
 function CardWallet() {
 	const { open } = useAppKit();
@@ -25,10 +24,8 @@ function CardWallet() {
 	const formattedAddress = address as `0x${string}`;
 	const { disconnect } = useDisconnect();
 
-	useConnectedChain();
-
-	console.log({ status });
-	console.log({ address });
+	console.log("Connection status:", status);
+	console.log("Connected wallet:", address);
 
 	return (
 		<Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -51,7 +48,7 @@ function CardWallet() {
 								leftIcon={<IconWallet size="1rem" />}
 								onClick={() => disconnect()}
 								variant="filled"
-								color="dark"
+								color="teal"
 								size="xs"
 							>
 								Disconnect
@@ -64,7 +61,7 @@ function CardWallet() {
 								leftIcon={<IconWallet size="1rem" />}
 								onClick={() => open()}
 								variant="filled"
-								color="dark"
+								color="orange"
 								size="xs"
 							>
 								Connect wallet
@@ -74,7 +71,7 @@ function CardWallet() {
 				</Group>
 				{(status == undefined || status === "disconnected") && (
 					<Stack>
-						<Group spacing="xs" position="center">
+						<Group spacing="xs" position="left">
 							<Text>
 								<Text span size="sm" fw="bold" color="gray.8">
 									Connect your wallet to access your balances

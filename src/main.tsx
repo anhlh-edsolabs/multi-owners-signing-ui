@@ -7,14 +7,14 @@ import App from "./App.tsx";
 import "./index.css";
 
 import { WagmiProvider } from "wagmi";
-import { config } from "./common/config";
+import { config, wagmiConfig } from "./common/config";
 
 const queryClient = new QueryClient();
 
 createAppKit(config);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-	<WagmiProvider config={config.adapters[0].wagmiConfig}>
+	<WagmiProvider config={wagmiConfig}>
 		<QueryClientProvider client={queryClient}>
 			<MantineProvider
 				withGlobalStyles

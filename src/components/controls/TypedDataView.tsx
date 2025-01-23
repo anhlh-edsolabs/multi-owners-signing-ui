@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { Stack } from "@mantine/core";
 import CombinedSignature from "./CombinedSignature";
-import TypedDataViewItem from "./TypedDataViewItem";
+import DataViewItem from "./TypedDataViewItem";
 
 import { useFunctionSelectionStore } from "../../hooks/stores/useFunctionSelectionStore";
 import { useTypedDataStore } from "../../hooks/stores/useTypedDataStore";
@@ -20,22 +20,22 @@ const TypedDataView = () => {
 				typedData && (
 					<Stack spacing="lg">
 						<Stack spacing="lg">
-							<TypedDataViewItem
+							<DataViewItem
 								title="Typed Data"
 								language="json"
 								content={JSON.stringify(typedData, null, 2)}
 							/>
-							<TypedDataViewItem
+							<DataViewItem
 								title="Function selector"
 								language="bash"
 								content={typedData.message.selector}
 							/>
-							<TypedDataViewItem
+							<DataViewItem
 								title="Input data"
 								language="json"
 								content={typedData.message.inputData}
 							/>
-							<TypedDataViewItem
+							<DataViewItem
 								title="Typed data struct hash"
 								language="json"
 								content={ethers.TypedDataEncoder.hashStruct(
@@ -44,7 +44,7 @@ const TypedDataView = () => {
 									typedData.message,
 								)}
 							/>
-							<TypedDataViewItem
+							<DataViewItem
 								title="Digest hash (for on-chain verification)"
 								language="json"
 								content={ethers.TypedDataEncoder.hash(
@@ -55,7 +55,7 @@ const TypedDataView = () => {
 							/>
 						</Stack>
 						{signature && (
-							<TypedDataViewItem
+							<DataViewItem
 								title="Signature"
 								language="json"
 								content={signature}

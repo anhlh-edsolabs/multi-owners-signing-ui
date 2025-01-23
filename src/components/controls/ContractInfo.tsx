@@ -3,7 +3,6 @@ import { IconTransitionRightFilled } from "@tabler/icons-react";
 
 import { ContractInfoProps } from "../../common/types/index";
 
-// import { useConnectedChain } from "../../hooks/useConnectedChain";
 import { useChainConnectionStore } from "../../hooks/stores/useChainConnectionStore";
 
 const ContractInfo = ({ title, address }: ContractInfoProps) => {
