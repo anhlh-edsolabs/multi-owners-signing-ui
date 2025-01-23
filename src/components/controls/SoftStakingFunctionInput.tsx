@@ -1,12 +1,5 @@
 import { useRef } from "react";
-import {
-	Group,
-	JsonInput,
-	Space,
-	Stack,
-	TextInput,
-	Title,
-} from "@mantine/core";
+import { Group, JsonInput, Space, Stack, TextInput, Title } from "@mantine/core";
 
 import Constants from "../../common/constants";
 
@@ -62,11 +55,9 @@ const SoftStakingFunctionInput = ({
 		<>
 			{selectedFunction && (
 				<Stack spacing="lg">
-					<Space h="md" />
-					<Title order={3}>
-						Selected Function: {selectedFunction}
-					</Title>
 					<form>
+						<Space h={40} />
+						<Title order={3}>{selectedFunction}</Title>
 						<Stack spacing="xs">
 							{selectedFunction !== SPECIAL_FUNCTION &&
 								selectedFunctionABI?.inputs.map(

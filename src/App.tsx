@@ -4,13 +4,13 @@ import { Container, Grid, Space, Stack } from "@mantine/core";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { getWalletClient } from "@wagmi/core";
 
-import { wagmiConfig as config } from "./common/config";
+import { wagmiConfig } from "./common/config";
 
 import Constants from "./common/constants";
 
+import CardWallet from "./components/cards/CardWallet";
 import CardERC20Token from "./components/cards/CardERC20Token";
 import CardSoftStakingContract from "./components/cards/CardSoftStakingContract";
-import CardWallet from "./components/cards/CardWallet";
 import CardCombineSignatures from "./components/cards/CardCombineSignatures";
 
 import { useConnectedChain } from "./hooks/useConnectedChain";
@@ -19,35 +19,38 @@ import { useChainConnectionStore } from "./hooks/stores/useChainConnectionStore"
 
 export default function App() {
 	const { status } = useAppKitAccount();
-	const [isTargetChainConnected, setTargetChainConnected] = useState(false);
+	const [targetChainConnected, setTargetChainConnected] = useState(false);
 	const { connectedChain } = useChainConnectionStore();
+
+	const defaultNetworkId = Number(Constants.DEFAULT_NETWORK_ID);
 
 	useConnectedChain();
 
 	useEffect(() => {
-		if (status === "connected") {
-			console.log("Config:", config.state);
-			getWalletClient(config)
-				.then((client) => {
-					if (client.chain.id !== Constants.DEFAULT_NETWORK_ID) {
-						console.log(
-							`Switching to default network with id ${Constants.DEFAULT_NETWORK_ID}...`,
-						);
-						
-						client.switchChain({
-							id: Constants.DEFAULT_NETWORK_ID,
-						});
+		const switchToDefaultNetwork = async () => {
+			if (status === "connected") {
+				try {
+					const client = await getWalletClient(wagmiConfig);
 
-						setTargetChainConnected(true);
-					}
-				})
-				.catch((error) => {
+					if (client.chain.id !== defaultNetworkId) {
+						console.log(
+							`Switching to default network with id ${defaultNetworkId}...`,
+						);
+
+						await client.switchChain({
+							id: defaultNetworkId,
+						});
+					} 
+					setTargetChainConnected(true);
+				} catch (error) {
 					console.error("Error getting wallet client:", error);
-				});
-		} else {
-			setTargetChainConnected(false);
-		}
-	}, [status, connectedChain]);
+				}
+			} else {
+				setTargetChainConnected(false);
+			}
+		};
+		switchToDefaultNetwork();
+	}, [status, connectedChain, defaultNetworkId]);
 
 	return (
 		<Container my="md" size="lg">
@@ -60,7 +63,7 @@ export default function App() {
 				</Grid.Col>
 			</Grid>
 
-			{status === "connected" && isTargetChainConnected && (
+			{status === "connected" && targetChainConnected && (
 				<>
 					<Space h="md" />
 					<Stack>
